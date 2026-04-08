@@ -76,7 +76,7 @@ publisher:
 # ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
 menu:
   Home: index.html
-  Guidance:
+  Guidelines:
     WHO SMART L1 Basis: who-smart-l1.html
   Artifacts: artifacts.html
 
