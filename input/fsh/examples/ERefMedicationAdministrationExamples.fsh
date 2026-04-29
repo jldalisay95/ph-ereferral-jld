@@ -26,7 +26,7 @@ Description: "Example chronic medication administration (antihypertensive) demon
 * medicationReference = Reference(ExampleERefMedicationTwinact)
 * subject = Reference(ExampleERefPatient)
 * effectiveDateTime = "2025-03-15T07:00:00+08:00"
-* context = Reference(ExampleERefEncounter)
+* context = Reference(ExampleERefMedicationAdministrationEncounter)
 * performer.actor = Reference(ExampleERefPractitioner)
 * performer.function = $sct#158965000 "Medical practitioner"
 * dosage.route = $sct#26643006 "Oral route"
@@ -58,10 +58,10 @@ Description: "Example medication resource for Twinact (Telmisartan + Amlodipine)
 * code.text = "Twinact (Telmisartan 80mg + Amlodipine 5mg) - antihypertensive"
 * status = #active
 
-Instance: ExampleERefEncounter
+Instance: ExampleERefMedicationAdministrationEncounter
 InstanceOf: PHCoreEncounter
 Usage: #example
-Title: "Example Referral Encounter"
+Title: "Example Medication Administration Encounter"
 Description: "Example ambulatory encounter context for medication administration during the referral visit."
 
 * status = #finished
