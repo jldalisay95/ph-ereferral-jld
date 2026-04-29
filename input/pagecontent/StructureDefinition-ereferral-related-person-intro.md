@@ -27,9 +27,9 @@ The RelatedPerson resource is optional in an eReferral exchange. Systems may use
 |---------|-------------|-------------|
 | `patient` | 1..1 | Patient associated with this contact |
 | `relationship` | 0..* | Relationship to the patient |
-| `name` | 0..1 | Name of the related person |
+| `name` | 0..* | Name of the related person |
 | `telecom` | 0..* | Contact details |
-| `address` | 0..1 | Address |
+| `address` | 0..* | Address |
 | `gender` | 0..1 | Administrative gender |
 | `birthDate` | 0..1 | Date of birth |
 | `period` | 0..1 | Relationship validity period |
