@@ -19,7 +19,6 @@ For v0.1, the workflow focuses on:
 
 The following topics are deferred or not fully resolved in this v0.1 workflow narrative:
 
-- final receiving-facility response terminology, including whether `accept` and `reject` should be used or replaced by policy-aligned wording;
 - non-response and service-level agreement handling;
 - full attachment and security handling;
 - final facility and network identification rules;
@@ -41,7 +40,7 @@ The following diagram reflects the latest minimum viable workflow discussed by t
 
 ![Minimum viable referral workflow](minimum-viable-workflow.png)
 
-The diagram uses the lanes `Initiator`, `Receiving Service`, and `Recipient`. The `Accept` and `Reject` labels shown in the decision point should be read as working workflow labels that map to current draft Task examples. Final receiving-facility response wording remains pending [Issue #47](https://github.com/ph-ereferral-organization/ph-ereferral/issues/47).
+The diagram uses the lanes `Initiator`, `Receiving Service`, and `Recipient`. The `Accept` and `Reject` labels shown in the decision point map to the v0.1 receiving-facility response terms resolved in [Issue #47](https://github.com/ph-ereferral-organization/ph-ereferral/issues/47) by [PR #84](https://github.com/ph-ereferral-organization/ph-ereferral/pull/84): `received`, `accepted`, `rejected`, and `referred-onward`. In this IG, `rejected` is limited to cases where the receiving facility cannot take the case and no onward facility is identified in the same response; capacity-full rerouting is represented as `referred-onward`.
 
 ## Actors and Systems
 
@@ -67,7 +66,7 @@ The minimum v0.1 workflow involves the following actors and systems.
 | 5 | Initiator creates the referral request and attaches clinical summary or notes. | Create an [EReferral ServiceRequest](StructureDefinition-ereferral-service-request.html) with `status`, `intent`, `subject`, `requester`, `performer`, `authoredOn`, `priority`, `reasonCode`, `reasonReference`, `supportingInfo`, and `note` as applicable. |
 | 6 | Initiator reviews candidate receiving facilities and sends the referral. | `ServiceRequest.performer` identifies the intended receiving facility, service, practitioner role, or navigator pattern used by the implementation. |
 | 7 | Receiving service receives, registers, or logs the referral and performs referral evaluation. | If workflow tracking is used, create or update an [EReferral Task](StructureDefinition-ereferral-task.html) with `Task.focus` referencing the ServiceRequest and `Task.status` representing the current workflow state. |
-| 8 | Receiving service records the receiving-facility decision or outcome. | Record the receiving-facility outcome using the current draft receiving-response terminology. Final policy wording remains subject to [Issue #47](https://github.com/ph-ereferral-organization/ph-ereferral/issues/47). |
+| 8 | Receiving service records the receiving-facility decision or outcome. | Record the receiving-facility outcome using the v0.1 receiving-response terminology: `received`, `accepted`, `rejected`, or `referred-onward`. Non-response is not represented in the current v0.1 examples. |
 | 9 | If the referral can proceed, route for clinical triage or review by the recipient and send updates to the sender. | `Task.owner`, `Task.lastModified`, `Task.note`, and `Task.output` may be used to show assignment, updates, and resulting information. |
 | 10 | Next steps after the referral decision are outside the v0.1 minimum path unless explicitly included in a test scenario. | Close the workflow when the referral outcome is known. In the current examples, closure is demonstrated with `Task.status = #completed`, `Task.executionPeriod.end`, and `Task.output`. |
 
@@ -85,7 +84,7 @@ The v0.1 workflow follows the FHIR workflow pattern used by other ServiceRequest
 | `Task.owner` | Identifies the receiving facility, receiving practitioner role, care navigator, or organization currently responsible for acting on the referral task. |
 | `Task.status` | Represents the current workflow state. Implementers should not assume that changing `Task.status` automatically changes `ServiceRequest.status`; any synchronization rule must be agreed by the implementation. |
 | `Task.statusReason` | May carry human-readable or coded context for a status such as rejected, cancelled, on-hold, capacity full, or another non-happy-path state. |
-| `Task.businessStatus` | Carries the draft receiving-facility business response when `Task.status` is too broad. Current draft codes include `received`, `accepted`, `rejected`, and `referred-onward`. |
+| `Task.businessStatus` | Carries the v0.1 receiving-facility business response when `Task.status` is too broad. Current codes include `received`, `accepted`, `rejected`, and `referred-onward`. |
 | `Task.output` | May carry the receiving-side update, result, or closure summary when the referral workflow outcome is known. |
 
 ## State Model
@@ -105,14 +104,16 @@ The table below describes the minimum state model for v0.1. Implementers should 
 
 ## Referral Response Semantics
 
-The receiving-facility response terminology has draft IG artifacts, but final policy wording remains an open design decision. [Issue #47](https://github.com/ph-ereferral-organization/ph-ereferral/issues/47) asks the CDG to confirm whether the workflow should use `accept/reject` or policy-aligned alternatives such as `received`, `referred`, `capacity full / refer elsewhere`, or other agreed terms. [Issue #41](https://github.com/ph-ereferral-organization/ph-ereferral/issues/41) also remains open for Hypertensive Emergency Referral terminology sync.
+The receiving-facility response terminology for v0.1 was resolved through [Issue #47](https://github.com/ph-ereferral-organization/ph-ereferral/issues/47) and [PR #84](https://github.com/ph-ereferral-organization/ph-ereferral/pull/84). The current IG uses local workflow codes to represent the following receiving-facility responses:
 
-Until that decision is resolved:
+| Response term | Meaning in v0.1 |
+| --- | --- |
+| `received` | The receiving facility has acknowledged receipt of the referral and is reviewing whether it can take the case. |
+| `accepted` | The receiving facility can take the case and has given a positive transfer or service response. |
+| `rejected` | The receiving facility cannot take the case and no onward receiving facility is identified in the same response. |
+| `referred-onward` | The receiving facility cannot take the case and directs the patient or referral to another specified facility. |
 
-- this page treats the current eReferral workflow codes as draft IG terminology for testing, not as final production policy wording;
-- this page treats the CDG workflow diagram's `Accept` and `Reject` labels as working labels that are still subject to terminology review;
-- rejected and referred-onward examples should be reviewed carefully by CDG, TDG, and PO before being treated as normative;
-- non-response and SLA handling are explicitly deferred for v0.1 unless a later decision adds them to scope.
+The `capacity-full` code is used as supporting context, such as `Task.statusReason`, for a referred-onward response when the receiving facility reports that capacity is full. Non-response and service-level agreement handling remain out of scope for v0.1 until timing and escalation rules are formally defined. [Issue #41](https://github.com/ph-ereferral-organization/ph-ereferral/issues/41) remains open for Hypertensive Emergency Referral terminology sync.
 
 ## FHIR Artifact Traceability
 
@@ -129,7 +130,7 @@ Current official examples that demonstrate the v0.1 workflow pattern include:
 - [Example eReferral Task - Completed State](Task-ExampleERefTaskCompleted.html)
 - [Example Onward eReferral ServiceRequest](ServiceRequest-ExampleERefServiceRequestOnward.html)
 
-The traceability table below is intentionally limited to current v0.1 examples and profiles. It should be updated if Issue #47 changes response terminology or if a separate referral-feedback artifact is introduced.
+The traceability table below is intentionally limited to current v0.1 examples and profiles. It should be updated if a later decision changes response terminology or if a separate referral-feedback artifact is introduced.
 
 | Workflow information | Current example field(s) |
 | --- | --- |
@@ -150,7 +151,7 @@ This v0.1 workflow page intentionally documents unresolved areas rather than sil
 - Attachment and security handling are not fully resolved in the current workflow narrative.
 - Facility and network identification rules are not finalized here. See [Issue #4](https://github.com/ph-ereferral-organization/ph-ereferral/issues/4) for the facility identification discussion.
 - Transport behavior is not defined by this page; implementations may use a referral management system, FHIR server, or exchange layer pattern agreed for the test event.
-- Receiving-facility response terms have draft IG examples, but final policy wording remains pending the decision in [Issue #47](https://github.com/ph-ereferral-organization/ph-ereferral/issues/47).
+- Receiving-facility response terms are defined for v0.1 testing, but production policy endorsement remains outside this informative page.
 - Hypertensive Emergency Referral wording is pending terminology sync in [Issue #41](https://github.com/ph-ereferral-organization/ph-ereferral/issues/41).
 - Consent, candidate receiving-facility selection rules, and the detailed post-decision recipient workflow are not fully specified in this v0.1 page.
 - Non-response and SLA handling are deferred unless explicitly included by a later v0.1 decision.
