@@ -1,18 +1,23 @@
 # This CI/CD workflow was derived from the HL7 FHIR IPS project:
 # https://github.com/HL7/fhir-ips/blob/master/.github/workflows/validate-docs.yml
 # Original license: Apache 2.0 (per HL7 FHIR licensing)
+# Modified to follow linear build pattern from PH Core IG
 
-name: Validate docs
+name: Build PH eReferral FHIR IG
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
-    types: [opened, synchronize] # This will trigger the workflow only when a PR is opened or updated with new commits
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
 
 jobs:
-  validate-branch-name:
+  build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Validate branch name
         env:
@@ -32,40 +37,70 @@ jobs:
             exit 1
           fi
 
-          echo "✅ Branch name validation passed"
+          echo "Branch name validation passed"
 
-  sushi:
-    needs: validate-branch-name
-    runs-on: ubuntu-latest
+      - uses: actions/checkout@v4
 
-    steps:
-      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz
+          sudo gem install jekyll
+          sudo npm install -g fsh-sushi
 
-      - name: Install Sushi
-        run: sudo npm install -g fsh-sushi
-
-      - name: Validate with Sushi
-        run: sushi .
-
-  ig-publisher:
-    needs: validate-branch-name
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Install Jekyll
-        run: sudo gem install jekyll
-
-      - name: Install Sushi
-        run: sudo npm install -g fsh-sushi
-
-      - name: Install IG publisher
+      - name: Build IG
         run: |
           chmod +x ./_updatePublisher.sh
           ./_updatePublisher.sh -y
-
-      - name: Validate IG
-        run: |
           chmod +x ./_genonce.sh
           ./_genonce.sh
+
+      - name: Upload QA artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-report
+          path: |
+            output/qa.html
+            output/qa.json
+            output/qa.min.html
+            output/qa-txservers.html
+            output/qa-dep.html
+            output/qa-ipreview.html
+          if-no-files-found: ignore
+
+      - name: QA Gate
+        run: |
+          if [ ! -f output/qa.json ]; then
+            echo "::error::No qa.json found"
+            exit 1
+          fi
+
+          ERRORS=$(jq -r '.errs // 0' output/qa.json)
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "::error::QA errors found: $ERRORS"
+            echo "::group::QA error details"
+            if [ -f output/qa.min.html ]; then
+              sed -e 's/<[^>]*>/ /g' -e 's/&nbsp;/ /g' output/qa.min.html \
+                | tr '\n' ' ' \
+                | sed -e 's/[[:space:]][[:space:]]*/ /g' \
+                | cut -c 1-12000
+            elif [ -f output/qa.html ]; then
+              grep -n "<b>error</b>" output/qa.html || true
+            fi
+            echo
+            echo "::endgroup::"
+            exit 1
+          fi
+
+          echo "QA passed: $ERRORS errors"
+
+      - name: Deploy to GitHub Pages
+        if: success() && github.event_name == 'push'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./output
+          force_orphan: true
+          commit_message: "Deploy IG - ${{ github.sha }}"

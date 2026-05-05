@@ -67,4 +67,4 @@ Expression: "contact.exists() implies contact.all(name.exists() or telecom.exist
 Invariant: ereferral-patient-2
 Description: "If PWD registration is provided with an ID, expiration date should also be provided."
 Severity: #warning
-Expression: "extension('urn://example.com/ph-ereferral/fhir/StructureDefinition/ereferral-pwd-disability').extension('pwdId').exists() implies extension('urn://example.com/ph-ereferral/fhir/StructureDefinition/ereferral-pwd-disability').extension('idExpirationDate').exists()"
+Expression: "extension('https://example.com/ph-ereferral/fhir/StructureDefinition/ereferral-pwd-disability').extension('pwdId').exists() implies extension('https://example.com/ph-ereferral/fhir/StructureDefinition/ereferral-pwd-disability').extension('idExpirationDate').exists()"

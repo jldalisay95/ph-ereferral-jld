@@ -92,7 +92,7 @@ The `reasonCode` element is bound to the [EReferralReason](ValueSet-ereferral-re
 
 **Example:**
 ```fsh
-* code = $sct#183519001 "Referral to cardiology service"
+* code = $sct#183519002 "Referral to cardiology service"
 * reasonCode = $sct#29857009 "Chest pain"
   * text = "Chest pain on exertion, suspected unstable angina"
 * reasonReference = Reference(Condition/789)
@@ -186,8 +186,8 @@ InstanceOf: ERefServiceRequest
 * status = #active
 * intent = #order
 * priority = #urgent
-* category = $sct#409063005 "Counselling"
-* code = $sct#183519001 "Referral to cardiology service"
+* category = $sct#3457005 "Patient referral"
+* code = $sct#183519002 "Referral to cardiology service"
 * subject = Reference(Patient/001)
 * authoredOn = "2025-03-23T10:00:00+08:00"
 * requester = Reference(PractitionerRole/DrSantos)
