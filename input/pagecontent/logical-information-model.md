@@ -2,75 +2,9 @@
 
 ## Purpose
 
-This page describes the information that should be present in a v0.1 PH eReferral package before implementers think about FHIR resources or REST interactions. It explains the main information groups, the reason each group matters, and the PeReF profiles that currently carry the information.
+This page describes the information that should be present in a v0.1 PH eReferral package and how that information relates to the current PeReF FHIR profiles and example RESTful exchange pattern.
 
-The logical model is intentionally one level above the FHIR implementation. It answers "what information is needed for a safe referral handover?" The FHIR profiles and REST interactions answer "how is that information exchanged?"
-
-## Model at a Glance
-
-<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="lim-title lim-desc" width="100%" viewBox="0 0 1100 520" preserveAspectRatio="xMidYMin meet">
-  <title id="lim-title">PH eReferral logical information model</title>
-  <desc id="lim-desc">Diagram showing patient identity, referral request, clinical reason, clinical context, prior care, sending context, receiving destination, workflow tracking, and audit as groups in the referral package.</desc>
-  <defs>
-    <style>
-      .lim-box { fill: #f8fbff; stroke: #2f5f8f; stroke-width: 2; rx: 8; }
-      .lim-core { fill: #edf7f0; stroke: #28724a; stroke-width: 2; rx: 8; }
-      .lim-track { fill: #fff7e8; stroke: #9a6400; stroke-width: 2; rx: 8; }
-      .lim-text { font-family: Arial, sans-serif; font-size: 20px; fill: #1b1f24; }
-      .lim-small { font-family: Arial, sans-serif; font-size: 15px; fill: #1b1f24; }
-      .lim-title { font-family: Arial, sans-serif; font-size: 24px; font-weight: 700; fill: #1b1f24; }
-      .lim-line { stroke: #53616f; stroke-width: 2; marker-end: url(#arrow); }
-    </style>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L0,6 L9,3 z" fill="#53616f"/>
-    </marker>
-  </defs>
-  <text x="550" y="36" text-anchor="middle" class="lim-title">Referral package information groups</text>
-
-  <rect x="405" y="72" width="290" height="112" class="lim-core"/>
-  <text x="550" y="112" text-anchor="middle" class="lim-text">Referral request</text>
-  <text x="550" y="140" text-anchor="middle" class="lim-small">Requested service, urgency, date</text>
-  <text x="550" y="164" text-anchor="middle" class="lim-small">and requested destination</text>
-
-  <rect x="80" y="92" width="250" height="88" class="lim-box"/>
-  <text x="205" y="128" text-anchor="middle" class="lim-text">Patient identity</text>
-  <text x="205" y="154" text-anchor="middle" class="lim-small">Who is being referred</text>
-
-  <rect x="770" y="92" width="250" height="88" class="lim-box"/>
-  <text x="895" y="128" text-anchor="middle" class="lim-text">Sending context</text>
-  <text x="895" y="154" text-anchor="middle" class="lim-small">Who sent the referral</text>
-
-  <rect x="80" y="238" width="250" height="104" class="lim-box"/>
-  <text x="205" y="274" text-anchor="middle" class="lim-text">Clinical reason</text>
-  <text x="205" y="300" text-anchor="middle" class="lim-small">Why referral is needed</text>
-  <text x="205" y="324" text-anchor="middle" class="lim-small">and how urgent it is</text>
-
-  <rect x="405" y="232" width="290" height="116" class="lim-box"/>
-  <text x="550" y="268" text-anchor="middle" class="lim-text">Clinical context</text>
-  <text x="550" y="294" text-anchor="middle" class="lim-small">Current condition, observations,</text>
-  <text x="550" y="318" text-anchor="middle" class="lim-small">diagnostics, and prior care</text>
-
-  <rect x="770" y="238" width="250" height="104" class="lim-box"/>
-  <text x="895" y="274" text-anchor="middle" class="lim-text">Receiving context</text>
-  <text x="895" y="300" text-anchor="middle" class="lim-small">Who should receive, triage,</text>
-  <text x="895" y="324" text-anchor="middle" class="lim-small">or act on the referral</text>
-
-  <rect x="245" y="400" width="270" height="82" class="lim-track"/>
-  <text x="380" y="434" text-anchor="middle" class="lim-text">Workflow tracking</text>
-  <text x="380" y="460" text-anchor="middle" class="lim-small">Current state and next action</text>
-
-  <rect x="585" y="400" width="270" height="82" class="lim-track"/>
-  <text x="720" y="434" text-anchor="middle" class="lim-text">Audit and provenance</text>
-  <text x="720" y="460" text-anchor="middle" class="lim-small">Who submitted or changed data</text>
-
-  <line x1="330" y1="136" x2="405" y2="128" class="lim-line"/>
-  <line x1="770" y1="136" x2="695" y2="128" class="lim-line"/>
-  <line x1="330" y1="290" x2="405" y2="290" class="lim-line"/>
-  <line x1="695" y1="290" x2="770" y2="290" class="lim-line"/>
-  <line x1="550" y1="184" x2="550" y2="232" class="lim-line"/>
-  <line x1="470" y1="348" x2="408" y2="400" class="lim-line"/>
-  <line x1="630" y1="348" x2="692" y2="400" class="lim-line"/>
-</svg>
+The logical information model answers: what information is needed for a safe referral handover? The FHIR mapping answers: which PeReF profile or FHIR path carries that information? The RESTful interaction flow answers: how might systems exchange the referral package during implementation testing?
 
 ## Guiding Principle
 
@@ -80,20 +14,172 @@ A referral should contain enough information for the receiving facility to ident
 
 | Logical group | What it answers | Why it matters | Current PeReF mapping |
 |---------------|-----------------|----------------|-----------------------|
-| Patient identity | Who is being referred? | Prevents misidentification and supports patient matching, contact, and handover. | [ERefPatient](StructureDefinition-ereferral-patient.html); `ServiceRequest.subject`; `Task.for`. |
-| Sending context | Who created or sent the referral? | Supports accountability, callback, role, and originating facility context. | [PH eReferral PractitionerRole](StructureDefinition-ereferral-practitioner-role.html); practitioner; organization; `ServiceRequest.requester`; `Task.requester`. |
+| Patient identity | Who is being referred? | Prevents misidentification and supports patient matching, contact, and handover. | [ERefPatient](StructureDefinition-ereferral-patient.html); `ServiceRequest.subject`; `Task.for`; `Encounter.subject`. |
+| Sending context | Who created or sent the referral? | Supports accountability, callback, role, and originating facility context. | [PH eReferral PractitionerRole](StructureDefinition-ereferral-practitioner-role.html); Practitioner; Organization; `ServiceRequest.requester`; `Task.requester`. |
 | Receiving context | Who is expected to receive, triage, or perform the requested service? | Supports routing, triage, receiving-facility preparation, and assignment of responsibility. | Organization; [PH eReferral PractitionerRole](StructureDefinition-ereferral-practitioner-role.html); `ServiceRequest.performer`; `Task.owner`. |
-| Referral request | What service, consultation, procedure, or action is being requested? | Defines the operational purpose of the referral and the urgency of action. | [EReferral ServiceRequest](StructureDefinition-ereferral-service-request.html); `ServiceRequest.code`; `category`; `priority`; `authoredOn`; `occurrence[x]`. |
+| Referral request | What service, consultation, procedure, or action is being requested? | Defines the operational purpose of the referral and the urgency of action. | [EReferral ServiceRequest](StructureDefinition-ereferral-service-request.html); `ServiceRequest.code`; `category`; `priority`; `authoredOn`; `occurrence[x]`; `replaces`. |
 | Clinical reason | Why is the referral needed? | Helps the receiving side triage, accept, redirect, or prepare for the patient. | `ServiceRequest.reasonCode`; `ServiceRequest.reasonReference`; Condition; Observation. |
 | Clinical context and prior care | What is the patient's current condition, and what has already been done? | Supports safe handover, continuity of care, and avoidance of duplicate or unsafe treatment. | `ServiceRequest.supportingInfo`; Observation; Condition; Procedure; [EReferral MedicationAdministration](StructureDefinition-ereferral-medication-administration.html); [ERefImmunization](StructureDefinition-ereferral-immunization.html). |
 | Workflow and response tracking | Where is the referral in the process, and what has the receiving side reported? | Tracks responsibility, response, redirection, and closure without changing the clinical referral request itself. | [EReferral Task](StructureDefinition-ereferral-task.html); `Task.focus`; `Task.status`; `Task.businessStatus`; `Task.statusReason`; `Task.output`. |
 | Audit and provenance | Who submitted, signed, or changed referral information? | Supports traceability, trust, review, and medico-legal accountability. | [EReferral Provenance](StructureDefinition-ereferral-provenance.html); `ServiceRequest.relevantHistory`; `Provenance.target`; `Provenance.recorded`; `Provenance.agent`; `Provenance.signature`. |
 
+## eReferral Profile Relationships
+
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="rel-title rel-desc" width="100%" viewBox="0 0 1180 660" preserveAspectRatio="xMidYMin meet">
+  <title id="rel-title">PeReF profile relationship diagram</title>
+  <desc id="rel-desc">Diagram showing ERefServiceRequest as the central referral request, related to patient, practitioner role, organization, clinical evidence, task, provenance, and encounter resources.</desc>
+  <defs>
+    <style>
+      .rel-core { fill: #edf7f0; stroke: #28724a; stroke-width: 2; rx: 8; }
+      .rel-box { fill: #f8fbff; stroke: #2f5f8f; stroke-width: 2; rx: 8; }
+      .rel-track { fill: #fff7e8; stroke: #9a6400; stroke-width: 2; rx: 8; }
+      .rel-text { font-family: Arial, sans-serif; font-size: 18px; fill: #1b1f24; }
+      .rel-small { font-family: Arial, sans-serif; font-size: 13px; fill: #1b1f24; }
+      .rel-label { font-family: Arial, sans-serif; font-size: 13px; fill: #44515f; }
+      .rel-line { stroke: #53616f; stroke-width: 2; marker-end: url(#rel-arrow); fill: none; }
+    </style>
+    <marker id="rel-arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#53616f"/>
+    </marker>
+  </defs>
+
+  <rect x="425" y="280" width="330" height="98" class="rel-core"/>
+  <text x="590" y="316" text-anchor="middle" class="rel-text">ERefServiceRequest</text>
+  <text x="590" y="342" text-anchor="middle" class="rel-small">central referral request</text>
+  <text x="590" y="364" text-anchor="middle" class="rel-small">requester, performer, reason, supportingInfo</text>
+
+  <rect x="70" y="74" width="260" height="78" class="rel-box"/>
+  <text x="200" y="106" text-anchor="middle" class="rel-text">ERefPatient</text>
+  <text x="200" y="132" text-anchor="middle" class="rel-small">patient identity</text>
+
+  <rect x="460" y="68" width="260" height="90" class="rel-box"/>
+  <text x="590" y="100" text-anchor="middle" class="rel-text">PractitionerRole</text>
+  <text x="590" y="126" text-anchor="middle" class="rel-small">referring practitioner</text>
+  <text x="590" y="146" text-anchor="middle" class="rel-small">and facility context</text>
+
+  <rect x="850" y="74" width="260" height="78" class="rel-box"/>
+  <text x="980" y="106" text-anchor="middle" class="rel-text">Organization</text>
+  <text x="980" y="132" text-anchor="middle" class="rel-small">receiving facility</text>
+
+  <rect x="70" y="286" width="260" height="90" class="rel-box"/>
+  <text x="200" y="318" text-anchor="middle" class="rel-text">Condition / Observation</text>
+  <text x="200" y="344" text-anchor="middle" class="rel-small">clinical reason and evidence</text>
+
+  <rect x="70" y="500" width="270" height="96" class="rel-box"/>
+  <text x="205" y="532" text-anchor="middle" class="rel-text">Supporting clinical info</text>
+  <text x="205" y="558" text-anchor="middle" class="rel-small">Observation, Condition, Procedure,</text>
+  <text x="205" y="578" text-anchor="middle" class="rel-small">MedicationAdministration, Immunization</text>
+
+  <rect x="458" y="500" width="264" height="90" class="rel-track"/>
+  <text x="590" y="532" text-anchor="middle" class="rel-text">ERefTask</text>
+  <text x="590" y="558" text-anchor="middle" class="rel-small">workflow and response tracking</text>
+
+  <rect x="850" y="286" width="260" height="90" class="rel-track"/>
+  <text x="980" y="318" text-anchor="middle" class="rel-text">ERefProvenance</text>
+  <text x="980" y="344" text-anchor="middle" class="rel-small">audit, signature, activity history</text>
+
+  <rect x="850" y="500" width="260" height="90" class="rel-box"/>
+  <text x="980" y="532" text-anchor="middle" class="rel-text">ERefEncounter</text>
+  <text x="980" y="558" text-anchor="middle" class="rel-small">receiving encounter context</text>
+
+  <line x1="330" y1="116" x2="425" y2="302" class="rel-line"/>
+  <text x="340" y="190" class="rel-label">subject</text>
+  <line x1="590" y1="158" x2="590" y2="280" class="rel-line"/>
+  <text x="604" y="224" class="rel-label">requester</text>
+  <line x1="850" y1="116" x2="755" y2="302" class="rel-line"/>
+  <text x="780" y="190" class="rel-label">performer</text>
+  <line x1="330" y1="331" x2="425" y2="331" class="rel-line"/>
+  <text x="338" y="318" class="rel-label">reasonReference</text>
+  <line x1="340" y1="548" x2="486" y2="378" class="rel-line"/>
+  <text x="350" y="474" class="rel-label">supportingInfo</text>
+  <line x1="590" y1="500" x2="590" y2="378" class="rel-line"/>
+  <text x="604" y="448" class="rel-label">focus</text>
+  <line x1="850" y1="331" x2="755" y2="331" class="rel-line"/>
+  <text x="770" y="318" class="rel-label">relevantHistory</text>
+  <line x1="940" y1="500" x2="720" y2="378" class="rel-line"/>
+  <text x="805" y="460" class="rel-label">basedOn</text>
+</svg>
+
+| Relationship | FHIR path | Meaning |
+|--------------|-----------|---------|
+| Patient to referral request | `ServiceRequest.subject` | The patient being referred. |
+| Sending side to request | `ServiceRequest.requester` | The practitioner, role, or facility responsible for creating the referral. |
+| Receiving side to request | `ServiceRequest.performer` | The intended receiving facility or role. |
+| Clinical reason to request | `ServiceRequest.reasonCode`; `ServiceRequest.reasonReference` | The reason the receiving side should evaluate the referral. |
+| Supporting clinical information to request | `ServiceRequest.supportingInfo` | Clinical observations, conditions, procedures, treatment, medications, or immunizations needed for handover. |
+| Workflow tracking to request | `Task.focus` | The Task tracking status, receiving response, assignment, and closure for the ServiceRequest. |
+| Audit record to request | `ServiceRequest.relevantHistory`; `Provenance.target` | The provenance record for signatures, submissions, and updates. |
+| Encounter to request | `Encounter.basedOn` | The encounter associated with acting on or closing the referral. |
+
+## Example FHIR RESTful Interaction Flow
+
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="flow-title flow-desc" width="100%" viewBox="0 0 1180 510" preserveAspectRatio="xMidYMin meet">
+  <title id="flow-title">Example eReferral RESTful interaction flow</title>
+  <desc id="flow-desc">Sequence-style diagram showing a referring system creating referral resources, a FHIR server storing them, and a receiving system searching, reading, updating, and closing referral workflow resources.</desc>
+  <defs>
+    <style>
+      .flow-head { fill: #eef4fb; stroke: #2f5f8f; stroke-width: 2; rx: 8; }
+      .flow-server { fill: #edf7f0; stroke: #28724a; stroke-width: 2; rx: 8; }
+      .flow-line { stroke: #8894a0; stroke-width: 2; }
+      .flow-arrow { stroke: #2f4050; stroke-width: 2.4; marker-end: url(#flow-arrow); fill: none; }
+      .flow-text { font-family: Arial, sans-serif; font-size: 18px; fill: #1b1f24; }
+      .flow-small { font-family: Arial, sans-serif; font-size: 14px; fill: #1b1f24; }
+      .flow-note { font-family: Arial, sans-serif; font-size: 13px; fill: #44515f; }
+    </style>
+    <marker id="flow-arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#2f4050"/>
+    </marker>
+  </defs>
+
+  <rect x="55" y="34" width="260" height="58" class="flow-head"/>
+  <text x="185" y="70" text-anchor="middle" class="flow-text">Referring system</text>
+  <rect x="460" y="34" width="260" height="58" class="flow-server"/>
+  <text x="590" y="70" text-anchor="middle" class="flow-text">FHIR server</text>
+  <rect x="865" y="34" width="260" height="58" class="flow-head"/>
+  <text x="995" y="70" text-anchor="middle" class="flow-text">Receiving system</text>
+
+  <line x1="185" y1="100" x2="185" y2="460" class="flow-line"/>
+  <line x1="590" y1="100" x2="590" y2="460" class="flow-line"/>
+  <line x1="995" y1="100" x2="995" y2="460" class="flow-line"/>
+
+  <line x1="190" y1="138" x2="585" y2="138" class="flow-arrow"/>
+  <text x="205" y="125" class="flow-small">1. POST/PUT patient, facility, practitioner, and clinical evidence resources</text>
+
+  <line x1="190" y1="198" x2="585" y2="198" class="flow-arrow"/>
+  <text x="205" y="185" class="flow-small">2. POST ServiceRequest using ERefServiceRequest</text>
+
+  <line x1="190" y1="258" x2="585" y2="258" class="flow-arrow"/>
+  <text x="205" y="245" class="flow-small">3. POST Task with focus = ServiceRequest and status = requested</text>
+
+  <line x1="990" y1="318" x2="598" y2="318" class="flow-arrow"/>
+  <text x="608" y="305" class="flow-small">4. SEARCH/READ referral Task or ServiceRequest</text>
+
+  <line x1="990" y1="378" x2="598" y2="378" class="flow-arrow"/>
+  <text x="608" y="365" class="flow-small">5. PUT/PATCH Task response, businessStatus, statusReason, or output</text>
+
+  <line x1="990" y1="438" x2="598" y2="438" class="flow-arrow"/>
+  <text x="608" y="425" class="flow-small">6. POST Provenance, Encounter, onward ServiceRequest, or close Task as needed</text>
+
+  <text x="590" y="492" text-anchor="middle" class="flow-note">Exact supported searches, transaction use, update style, and security controls are server capability decisions.</text>
+</svg>
+
+| Interaction | Example REST operation | Main artifacts | Notes |
+|-------------|------------------------|----------------|-------|
+| Create or update shared reference data | `POST /Patient`, `PUT /Patient/{id}`, `POST /Organization`, `POST /PractitionerRole` | ERefPatient, Organization, Practitioner, PractitionerRole | Use existing records when available. Create or update only when the exchange agreement allows it. |
+| Create the referral request | `POST /ServiceRequest` | ERefServiceRequest | Carries patient, requester, receiving performer, requested service, urgency, reason, and supporting clinical references. |
+| Create workflow tracking | `POST /Task` | ERefTask | `Task.focus` points to the ServiceRequest. Initial v0.1 exchange normally starts with a requested Task. |
+| Read or search for referrals | `GET /Task?focus=ServiceRequest/{id}`, `GET /ServiceRequest?performer=Organization/{id}&status=active` | Task, ServiceRequest | These are example searches. Actual support belongs in the server CapabilityStatement. |
+| Record receiving response | `PUT /Task/{id}` or `PATCH /Task/{id}` | ERefTask | Updates `Task.status`, `Task.businessStatus`, `Task.statusReason`, and/or `Task.output` depending on the response. |
+| Record onward referral | `POST /ServiceRequest`; `PUT/PATCH /Task/{id}` | ServiceRequest, Task | An onward ServiceRequest can use `ServiceRequest.replaces` to link back to the previous referral request. |
+| Record audit event or signature | `POST /Provenance` | ERefProvenance | Provenance can target the ServiceRequest and record signer, author, update, or other auditable activity. |
+| Record encounter or closure context | `POST /Encounter`; `PUT/PATCH /Task/{id}` | ERefEncounter, Task | Encounter can point back to the referral using `Encounter.basedOn`. Task completion records closure of the workflow tracking item. |
+| Submit as one package when supported | `POST /` with a transaction Bundle | Bundle containing the referral package resources | Transaction Bundles are useful for keeping references consistent, but server support and security rules must be confirmed. |
+
 ## Data Dictionary Alignment
 
 The data dictionary remains the source of individual data elements. This page groups those elements into referral-package concepts so reviewers and implementers can discuss the dataset without starting from FHIR paths.
 
-Current FSH comments already identify these draft row clusters:
+Current FSH comments identify these draft row clusters:
 
 | Data dictionary area | Draft row references visible in the repository | Logical group |
 |----------------------|------------------------------------------------|---------------|
@@ -107,26 +193,12 @@ Current FSH comments already identify these draft row clusters:
 
 These row references should be verified against the approved data dictionary before release. Missing or changed rows should be updated from the source data dictionary, not inferred from this page.
 
-## FHIR Mapping Summary
-
-| Logical group | Main profile or resource | Main FHIR path |
-|---------------|--------------------------|----------------|
-| Patient identity | [ERefPatient](StructureDefinition-ereferral-patient.html) | `ServiceRequest.subject`; `Task.for`; `Encounter.subject`. |
-| Sending context | [PH eReferral PractitionerRole](StructureDefinition-ereferral-practitioner-role.html), Practitioner, Organization | `ServiceRequest.requester`; `Task.requester`. |
-| Receiving context | Organization, [PH eReferral PractitionerRole](StructureDefinition-ereferral-practitioner-role.html) | `ServiceRequest.performer`; `Task.owner`. |
-| Referral request | [EReferral ServiceRequest](StructureDefinition-ereferral-service-request.html) | `ServiceRequest.status`; `intent`; `code`; `category`; `priority`; `authoredOn`; `occurrence[x]`; `replaces`. |
-| Clinical reason | Condition, Observation | `ServiceRequest.reasonCode`; `ServiceRequest.reasonReference`. |
-| Clinical context and prior care | Condition, Observation, Procedure, MedicationAdministration, Immunization | `ServiceRequest.supportingInfo`. |
-| Workflow and response tracking | [EReferral Task](StructureDefinition-ereferral-task.html) | `Task.focus`; `Task.status`; `Task.businessStatus`; `Task.statusReason`; `Task.output`. |
-| Audit and provenance | [EReferral Provenance](StructureDefinition-ereferral-provenance.html) | `ServiceRequest.relevantHistory`; `Provenance.target`; `Provenance.agent`; `Provenance.signature`. |
-
-The RESTful exchange pattern and profile relationship diagram are described on [FHIR RESTful Interactions and Profile Relationships](fhir-interactions.html).
-
 ## Review Expectations
 
 Reviewers should confirm:
 
 - the logical groups match clinical and operational expectations for v0.1;
 - the data dictionary row clusters are accurate;
-- the FHIR mappings are consistent with the current PeReF profiles;
-- unresolved production topics such as routing, consent, security, attachments, and exchange hosting are handled in the appropriate implementation guidance.
+- the profile relationships are consistent with the current PeReF profiles;
+- REST interaction examples match the intended server CapabilityStatement;
+- production topics such as routing, consent, security, attachments, and exchange hosting are handled in the appropriate implementation guidance.

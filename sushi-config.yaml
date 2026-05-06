@@ -82,7 +82,6 @@ menu:
     v0.1 Connectathon Readiness: connectathon-readiness.html
     v0.1 Scope and Release Notes: v01-scope.html
     Logical Information Model: logical-information-model.html
-    FHIR Interactions: fhir-interactions.html
     v0.1 Coverage Map: coverage-map.html
     v0.1 Decision Log: decision-log.html
   Artifacts: artifacts.html
