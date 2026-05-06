@@ -2,18 +2,35 @@
 
 ## Purpose
 
-This page describes the information that should be present in a v0.1 PH eReferral package and how that information relates to the current PeReF FHIR profiles and example RESTful exchange pattern.
+This page describes the information that should be present in a v0.1 PH
+eReferral package and how that information relates to the current PeReF FHIR
+profiles and example RESTful exchange pattern.
 
-The logical information model answers: what information is needed for a safe referral handover? The FHIR mapping answers: which PeReF profile or FHIR path carries that information? The RESTful interaction flow answers: how might systems exchange the referral package during implementation testing?
+The logical information model answers: what information is needed for a safe
+referral handover? The FHIR mapping answers: which PeReF profile or FHIR path
+carries that information? The RESTful interaction flow answers: how might
+systems exchange the referral package during implementation testing?
 
 ## Guiding Principle
 
-A referral should contain enough information for the receiving facility to identify the patient, understand why the referral is needed, judge urgency, review the clinical context, know what has already been done, know who sent the referral, know who is expected to receive or act on it, respond or redirect safely, and support audit and accountability.
+A referral should contain enough information for the receiving facility to:
+
+- identify the patient;
+- understand why the referral is needed;
+- judge urgency;
+- review the clinical context;
+- know what has already been done;
+- know who sent the referral;
+- know who is expected to receive or act on it;
+- respond or redirect safely;
+- support audit and accountability.
 
 ## Logical Information Groups
 
+<!-- markdownlint-disable MD013 -->
+
 | Logical group | What it answers | Why it matters | Current PeReF mapping |
-|---------------|-----------------|----------------|-----------------------|
+| ------------- | --------------- | -------------- | --------------------- |
 | Patient identity | Who is being referred? | Prevents misidentification and supports patient matching, contact, and handover. | [ERefPatient](StructureDefinition-ereferral-patient.html); `ServiceRequest.subject`; `Task.for`; `Encounter.subject`. |
 | Sending context | Who created or sent the referral? | Supports accountability, callback, role, and originating facility context. | [PH eReferral PractitionerRole](StructureDefinition-ereferral-practitioner-role.html); Practitioner; Organization; `ServiceRequest.requester`; `Task.requester`. |
 | Receiving context | Who is expected to receive, triage, or perform the requested service? | Supports routing, triage, receiving-facility preparation, and assignment of responsibility. | Organization; [PH eReferral PractitionerRole](StructureDefinition-ereferral-practitioner-role.html); `ServiceRequest.performer`; `Task.owner`. |
@@ -23,14 +40,20 @@ A referral should contain enough information for the receiving facility to ident
 | Workflow and response tracking | Where is the referral in the process, and what has the receiving side reported? | Tracks responsibility, response, redirection, and closure without changing the clinical referral request itself. | [EReferral Task](StructureDefinition-ereferral-task.html); `Task.focus`; `Task.status`; `Task.businessStatus`; `Task.statusReason`; `Task.output`. |
 | Audit and provenance | Who submitted, signed, or changed referral information? | Supports traceability, trust, review, and medico-legal accountability. | [EReferral Provenance](StructureDefinition-ereferral-provenance.html); `ServiceRequest.relevantHistory`; `Provenance.target`; `Provenance.recorded`; `Provenance.agent`; `Provenance.signature`. |
 
+<!-- markdownlint-enable MD013 -->
+
 ## Data Dictionary Traceability
 
-The data dictionary remains the source of individual data elements. This page groups those elements into referral-package concepts so reviewers and implementers can discuss the dataset without starting from FHIR paths.
+The data dictionary remains the source of individual data elements. This page
+groups those elements into referral-package concepts so reviewers and
+implementers can discuss the dataset without starting from FHIR paths.
 
 Current draft mapping references include these row clusters:
 
+<!-- markdownlint-disable MD013 -->
+
 | Data dictionary area | Draft row references | Logical group |
-|----------------------|----------------------|---------------|
+| -------------------- | -------------------- | ------------- |
 | Referring practitioner and role | REF-1, REF-2 | Sending context |
 | Initiating facility | REF-5 to REF-8 | Sending context |
 | Care navigator and receiving facility | REF-9 to REF-11 | Receiving context; workflow tracking |
@@ -39,9 +62,15 @@ Current draft mapping references include these row clusters:
 | Treatment given | REF-39 | Clinical context and prior care |
 | Signature and recorded activity | REF-3, REF-4 | Audit and provenance |
 
-These row references should be verified against the approved data dictionary before release. Missing or changed rows should be updated from the source data dictionary, not inferred from this page.
+<!-- markdownlint-enable MD013 -->
+
+These row references should be verified against the approved data dictionary
+before release. Missing or changed rows should be updated from the source data
+dictionary, not inferred from this page.
 
 ## eReferral Profile Relationships
+
+<!-- markdownlint-disable MD013 MD033 -->
 
 <svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="rel-title rel-desc" width="100%" viewBox="0 0 1180 660" preserveAspectRatio="xMidYMin meet">
   <title id="rel-title">PeReF profile relationship diagram</title>
@@ -118,8 +147,12 @@ These row references should be verified against the approved data dictionary bef
   <text x="805" y="460" class="rel-label">basedOn</text>
 </svg>
 
+<!-- markdownlint-enable MD013 MD033 -->
+
+<!-- markdownlint-disable MD013 -->
+
 | Relationship | FHIR path | Meaning |
-|--------------|-----------|---------|
+| ------------ | --------- | ------- |
 | Patient to referral request | `ServiceRequest.subject` | The patient being referred. |
 | Sending side to request | `ServiceRequest.requester` | The practitioner, role, or facility responsible for creating the referral. |
 | Receiving side to request | `ServiceRequest.performer` | The intended receiving facility or role. |
@@ -129,9 +162,15 @@ These row references should be verified against the approved data dictionary bef
 | Audit record to request | `ServiceRequest.relevantHistory`; `Provenance.target` | The provenance record for signatures, submissions, and updates. |
 | Encounter to request | `Encounter.basedOn` | The encounter associated with acting on or closing the referral. |
 
+<!-- markdownlint-enable MD013 -->
+
 ## Example FHIR RESTful Interaction Flow
 
-The following flow is illustrative. Actual supported searches, update methods, transaction behavior, and security controls should be stated in the server CapabilityStatement and exchange agreement.
+The following flow is illustrative. Actual supported searches, update methods,
+transaction behavior, and security controls should be stated in the server
+CapabilityStatement and exchange agreement.
+
+<!-- markdownlint-disable MD013 MD033 -->
 
 <svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="flow-title flow-desc" width="100%" viewBox="0 0 1180 510" preserveAspectRatio="xMidYMin meet">
   <title id="flow-title">Example eReferral RESTful interaction flow</title>
@@ -183,8 +222,12 @@ The following flow is illustrative. Actual supported searches, update methods, t
   <text x="590" y="492" text-anchor="middle" class="flow-note">Exact supported searches, transaction use, update style, and security controls are server capability decisions.</text>
 </svg>
 
+<!-- markdownlint-enable MD013 MD033 -->
+
+<!-- markdownlint-disable MD013 -->
+
 | Interaction | Example REST operation | Main artifacts | Notes |
-|-------------|------------------------|----------------|-------|
+| ----------- | ---------------------- | -------------- | ----- |
 | Create or update shared reference data | `POST /Patient`, `PUT /Patient/{id}`, `POST /Organization`, `POST /PractitionerRole` | ERefPatient, Organization, Practitioner, PractitionerRole | Use existing records when available. Create or update only when the exchange agreement allows it. |
 | Create the referral request | `POST /ServiceRequest` | ERefServiceRequest | Carries patient, requester, receiving performer, requested service, urgency, reason, and supporting clinical references. |
 | Create workflow tracking | `POST /Task` | ERefTask | `Task.focus` points to the ServiceRequest. Initial v0.1 exchange normally starts with a requested Task. |
@@ -195,6 +238,8 @@ The following flow is illustrative. Actual supported searches, update methods, t
 | Record encounter or closure context | `POST /Encounter`; `PUT/PATCH /Task/{id}` | ERefEncounter, Task | Encounter can point back to the referral using `Encounter.basedOn`. Task completion records closure of the workflow tracking item. |
 | Submit as one package when supported | `POST /` with a transaction Bundle | Bundle containing the referral package resources | Transaction Bundles are useful for keeping references consistent, but server support and security rules must be confirmed. |
 
+<!-- markdownlint-enable MD013 -->
+
 ## Review Expectations
 
 Reviewers should confirm:
@@ -203,4 +248,5 @@ Reviewers should confirm:
 - the data dictionary row clusters are accurate;
 - the profile relationships are consistent with the current PeReF profiles;
 - REST interaction examples match the intended server CapabilityStatement;
-- production topics such as routing, consent, security, attachments, and exchange hosting are handled in the appropriate implementation guidance.
+- production topics such as routing, consent, security, attachments, and
+  exchange hosting are handled in the appropriate implementation guidance.
