@@ -1,95 +1,132 @@
 # v0.1 Referral Logical Information Model
 
-## 1. Purpose
+## Purpose
 
-This page describes the logical information model for the v0.1 PH eReferral dataset. It explains what information belongs in a referral package, why each information group matters for safe handover, and how each group relates to PeReF FHIR artifacts.
+This page describes the information that should be present in a v0.1 PH eReferral package before implementers think about FHIR resources or REST interactions. It explains the main information groups, the reason each group matters, and the PeReF profiles that currently carry the information.
 
-This is not the workflow model and it is not the physical FHIR model. The logical information model describes the referral information before it is represented as FHIR resources, profiles, elements, and examples.
+The logical model is intentionally one level above the FHIR implementation. It answers "what information is needed for a safe referral handover?" The FHIR profiles and REST interactions answer "how is that information exchanged?"
 
-## 2. Relationship to the workflow and state model
+## Model at a Glance
 
-The workflow model explains what happens to the referral over time. The state model explains what status the referral is in and which actor is expected to act next. The logical information model explains what information must be present in the referral package so the receiving facility can understand and act on the referral. The FHIR implementation model explains how that information is represented using PeReF profiles, references, terminology, and examples.
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="lim-title lim-desc" width="100%" viewBox="0 0 1100 520" preserveAspectRatio="xMidYMin meet">
+  <title id="lim-title">PH eReferral logical information model</title>
+  <desc id="lim-desc">Diagram showing patient identity, referral request, clinical reason, clinical context, prior care, sending context, receiving destination, workflow tracking, and audit as groups in the referral package.</desc>
+  <defs>
+    <style>
+      .lim-box { fill: #f8fbff; stroke: #2f5f8f; stroke-width: 2; rx: 8; }
+      .lim-core { fill: #edf7f0; stroke: #28724a; stroke-width: 2; rx: 8; }
+      .lim-track { fill: #fff7e8; stroke: #9a6400; stroke-width: 2; rx: 8; }
+      .lim-text { font-family: Arial, sans-serif; font-size: 20px; fill: #1b1f24; }
+      .lim-small { font-family: Arial, sans-serif; font-size: 15px; fill: #1b1f24; }
+      .lim-title { font-family: Arial, sans-serif; font-size: 24px; font-weight: 700; fill: #1b1f24; }
+      .lim-line { stroke: #53616f; stroke-width: 2; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#53616f"/>
+    </marker>
+  </defs>
+  <text x="550" y="36" text-anchor="middle" class="lim-title">Referral package information groups</text>
 
-Issue [#80](https://github.com/ph-ereferral-organization/ph-ereferral/issues/80) and PR [#83](https://github.com/ph-ereferral-organization/ph-ereferral/pull/83) track the dedicated workflow narrative and state model. Until that workflow page is available in this branch, use the [v0.1 Connectathon Quick-Start](connectathon-readiness.html), [v0.1 Coverage Map](coverage-map.html), and [v0.1 Decision Log](decision-log.html) for the current local v0.1 workflow and artifact context.
+  <rect x="405" y="72" width="290" height="112" class="lim-core"/>
+  <text x="550" y="112" text-anchor="middle" class="lim-text">Referral request</text>
+  <text x="550" y="140" text-anchor="middle" class="lim-small">Requested service, urgency, date</text>
+  <text x="550" y="164" text-anchor="middle" class="lim-small">and requested destination</text>
 
-## 3. Guiding principle
+  <rect x="80" y="92" width="250" height="88" class="lim-box"/>
+  <text x="205" y="128" text-anchor="middle" class="lim-text">Patient identity</text>
+  <text x="205" y="154" text-anchor="middle" class="lim-small">Who is being referred</text>
 
-A referral should contain enough information for the receiving facility to:
+  <rect x="770" y="92" width="250" height="88" class="lim-box"/>
+  <text x="895" y="128" text-anchor="middle" class="lim-text">Sending context</text>
+  <text x="895" y="154" text-anchor="middle" class="lim-small">Who sent the referral</text>
 
-- identify the patient;
-- understand why the referral is needed;
-- judge urgency;
-- review the current clinical context;
-- know what has already been done;
-- know who sent the referral;
-- know who is expected to receive or act on it;
-- respond, redirect, or close the referral safely;
-- support audit and accountability.
+  <rect x="80" y="238" width="250" height="104" class="lim-box"/>
+  <text x="205" y="274" text-anchor="middle" class="lim-text">Clinical reason</text>
+  <text x="205" y="300" text-anchor="middle" class="lim-small">Why referral is needed</text>
+  <text x="205" y="324" text-anchor="middle" class="lim-small">and how urgent it is</text>
 
-## 4. Logical information groups
+  <rect x="405" y="232" width="290" height="116" class="lim-box"/>
+  <text x="550" y="268" text-anchor="middle" class="lim-text">Clinical context</text>
+  <text x="550" y="294" text-anchor="middle" class="lim-small">Current condition, observations,</text>
+  <text x="550" y="318" text-anchor="middle" class="lim-small">diagnostics, and prior care</text>
 
-| Logical information group | Plain-English meaning | Clinical / operational rationale | Related data dictionary rows or concepts | Related PeReF FHIR artifact / path |
-|---------------------------|-----------------------|----------------------------------|------------------------------------------|------------------------------------|
-| Patient | Who is being referred. | Identifies the person needing care and supports matching, contact, and safe handover. | REF-21 through REF-30 are referenced in `ERefPatient` comments for patient demographics, identifiers, address, contact, next of kin, and PWD registration. | [ERefPatient](StructureDefinition-ereferral-patient.html); `ServiceRequest.subject`; `Task.for` where workflow tracking references the patient. |
-| Referring source | Who is sending the referral. | Provides accountability, callback information, practitioner role, and initiating facility context. | REF-1, REF-2, and REF-5 to REF-8 are referenced in `ERefServiceRequest` and `ERefPractitionerRole` comments. | [PH eReferral PractitionerRole](StructureDefinition-ereferral-practitioner-role.html); `ServiceRequest.requester`; practitioner and organization references. |
-| Receiving destination | Who is expected to receive or perform the requested service. | Supports routing, triage, preparation, and receiving-side responsibility. | REF-9, REF-10, and REF-11 are referenced in `ERefServiceRequest`, `ERefTask`, and `ERefPractitionerRole` comments for care navigator and receiving facility concepts. | `ServiceRequest.performer`; Organization; [PH eReferral PractitionerRole](StructureDefinition-ereferral-practitioner-role.html); `Task.owner` when assigned. |
-| Referral request | What care, service, consultation, procedure, or action is being requested. | Defines the purpose and urgency of the referral request. | REF-13, REF-14, and REF-16 are referenced in `ERefServiceRequest` comments for authored date, category, priority, and requested service/reason concepts. | [EReferral ServiceRequest](StructureDefinition-ereferral-service-request.html); `ServiceRequest.code`; `ServiceRequest.category`; `ServiceRequest.priority`; `ServiceRequest.authoredOn`; `ServiceRequest.occurrence[x]`. |
-| Clinical reason | Why the referral is needed. | Supports triage, acceptance, preparation, or redirection by the receiving facility. | REF-16 is referenced in `ERefServiceRequest` comments for reason for referral and supporting clinical reason concepts. | `ServiceRequest.reasonCode`; `ServiceRequest.reasonReference`; Condition; Observation. |
-| Clinical context | Information needed to understand the patient's current condition. | Supports safe handover and receiving-facility preparation before the patient arrives or is redirected. | REF-15 is referenced for time called and supporting clinical information; other detailed clinical rows should be inserted from the data dictionary when confirmed. | `ServiceRequest.supportingInfo`; Observation; Condition; Procedure; DiagnosticReport if applicable; [ERefImmunization](StructureDefinition-ereferral-immunization.html). |
-| Prior care / treatment given | What has already been done before referral. | Supports continuity of care, avoids duplicate or unsafe treatment, and helps the receiving facility understand stabilization already performed. | REF-39 is referenced in `ERefMedicationAdministration`; REF-15 is referenced for supporting information. Additional treatment rows should be confirmed from the data dictionary. | [EReferral MedicationAdministration](StructureDefinition-ereferral-medication-administration.html); Procedure if applicable; `ServiceRequest.supportingInfo`. |
-| Workflow tracking | Where the referral is in the process and who is responsible for the next action. | Tracks responsibility, assignment, and progression without changing the clinical referral request itself. | REF-9 is referenced for care navigator assignment. Workflow status row mapping needs TDG confirmation. | [EReferral Task](StructureDefinition-ereferral-task.html); `Task.focus`; `Task.status`; `Task.requester`; `Task.owner`; `Task.authoredOn`; `Task.lastModified`. |
-| Receiving response | What the receiving side decided or reported. | Confirms whether the patient can be accepted, cannot be received, is referred onward, or has another receiving-side outcome. | [DATA DICTIONARY ROW TO BE INSERTED] for receiving-facility response semantics. Current terminology is represented in the eReferral workflow code system and receiving response value set. | [EReferral Task](StructureDefinition-ereferral-task.html); `Task.businessStatus`; `Task.statusReason`; `Task.output`; onward `ServiceRequest.replaces` where applicable. |
-| Audit / provenance | Who signed, submitted, changed, or updated referral information. | Supports accountability, medico-legal traceability, review, and implementation trust. | REF-3 and REF-4 are referenced in `ERefServiceRequest` and `ERefProvenance` comments for signature time and professional signature. | [EReferral Provenance](StructureDefinition-ereferral-provenance.html); `ServiceRequest.relevantHistory`; `Provenance.target`; `Provenance.recorded`; `Provenance.agent`; `Provenance.signature`. |
+  <rect x="770" y="238" width="250" height="104" class="lim-box"/>
+  <text x="895" y="274" text-anchor="middle" class="lim-text">Receiving context</text>
+  <text x="895" y="300" text-anchor="middle" class="lim-small">Who should receive, triage,</text>
+  <text x="895" y="324" text-anchor="middle" class="lim-small">or act on the referral</text>
 
-## 5. Data dictionary mapping approach
+  <rect x="245" y="400" width="270" height="82" class="lim-track"/>
+  <text x="380" y="434" text-anchor="middle" class="lim-text">Workflow tracking</text>
+  <text x="380" y="460" text-anchor="middle" class="lim-small">Current state and next action</text>
 
-This page does not replace the data dictionary. It groups data dictionary elements into implementer-facing logical groups so CDG, TDG, implementers, and beta testers can discuss the referral package without starting from FHIR paths.
+  <rect x="585" y="400" width="270" height="82" class="lim-track"/>
+  <text x="720" y="434" text-anchor="middle" class="lim-text">Audit and provenance</text>
+  <text x="720" y="460" text-anchor="middle" class="lim-small">Who submitted or changed data</text>
 
-The REF row identifiers above are taken only from TDG references already visible in the repository's FSH comments and examples. They should be treated as draft mapping hints until checked against the source data dictionary. Do not treat this page as the authoritative row list.
+  <line x1="330" y1="136" x2="405" y2="128" class="lim-line"/>
+  <line x1="770" y1="136" x2="695" y2="128" class="lim-line"/>
+  <line x1="330" y1="290" x2="405" y2="290" class="lim-line"/>
+  <line x1="695" y1="290" x2="770" y2="290" class="lim-line"/>
+  <line x1="550" y1="184" x2="550" y2="232" class="lim-line"/>
+  <line x1="470" y1="348" x2="408" y2="400" class="lim-line"/>
+  <line x1="630" y1="348" x2="692" y2="400" class="lim-line"/>
+</svg>
 
-Rows not visible in the repository are marked as `[DATA DICTIONARY ROW TO BE INSERTED]` or described as needing TDG confirmation. Missing row numbers should be filled from the approved data dictionary rather than inferred from adjacent rows.
+## Guiding Principle
 
-## 6. FHIR mapping summary
+A referral should contain enough information for the receiving facility to identify the patient, understand why the referral is needed, judge urgency, review the clinical context, know what has already been done, know who sent the referral, know who is expected to receive or act on it, respond or redirect safely, and support audit and accountability.
 
-| Logical group | Primary FHIR resource/profile | Main FHIR path | Notes / constraints |
-|---------------|-------------------------------|----------------|---------------------|
-| Patient | [ERefPatient](StructureDefinition-ereferral-patient.html) | `ServiceRequest.subject`; `Task.for` | The ServiceRequest subject identifies the referred patient. Task may also reference the patient for workflow context. |
-| Referring source | [PH eReferral PractitionerRole](StructureDefinition-ereferral-practitioner-role.html), Practitioner, Organization | `ServiceRequest.requester`; `Task.requester` | `ServiceRequest.requester` is required in `ERefServiceRequest` and uses PractitionerRole to carry practitioner and facility context. |
-| Receiving destination | Organization, [PH eReferral PractitionerRole](StructureDefinition-ereferral-practitioner-role.html) | `ServiceRequest.performer`; `Task.owner` | `ServiceRequest.performer` identifies the intended receiving performer. `Task.owner` identifies the assigned receiving-side owner when known. |
-| Referral request | [EReferral ServiceRequest](StructureDefinition-ereferral-service-request.html) | `ServiceRequest.code`; `ServiceRequest.category`; `ServiceRequest.priority`; `ServiceRequest.intent`; `ServiceRequest.authoredOn`; `ServiceRequest.occurrence[x]` | `ServiceRequest.intent` is fixed to `order` for eReferral. Priority is bound to the eReferral priority value set. |
-| Clinical reason | Condition, Observation, [EReferral ServiceRequest](StructureDefinition-ereferral-service-request.html) | `ServiceRequest.reasonCode`; `ServiceRequest.reasonReference` | Reason can be represented as a coded reason and/or references to condition or observation evidence. |
-| Clinical context | Observation, Condition, Procedure, MedicationAdministration, Immunization | `ServiceRequest.supportingInfo` | Current profile constraints allow supporting Condition, Observation, Procedure, MedicationAdministration, and Immunization references from PH Core-based profiles. |
-| Prior care / treatment given | [EReferral MedicationAdministration](StructureDefinition-ereferral-medication-administration.html), Procedure | `ServiceRequest.supportingInfo`; `MedicationAdministration.status`; `MedicationAdministration.medication[x]`; `MedicationAdministration.effective[x]` | Used for stabilization, medications, procedures, or other care already performed before referral. |
-| Workflow tracking | [EReferral Task](StructureDefinition-ereferral-task.html) | `Task.focus`; `Task.status`; `Task.requester`; `Task.owner`; `Task.authoredOn`; `Task.lastModified` | `Task.focus` is required and points to the `ERefServiceRequest` being tracked. |
-| Receiving response | [EReferral Task](StructureDefinition-ereferral-task.html) | `Task.businessStatus`; `Task.statusReason`; `Task.output` | `Task.status` carries the standard FHIR lifecycle status. `Task.businessStatus` carries the PeReF receiving-response term. |
-| Audit / provenance | [EReferral Provenance](StructureDefinition-ereferral-provenance.html) | `ServiceRequest.relevantHistory`; `Provenance.target`; `Provenance.recorded`; `Provenance.agent`; `Provenance.signature` | `ERefProvenance.target` is constrained to the eReferral ServiceRequest. |
-| Encounter closure context | [ERefEncounter](StructureDefinition-ereferral-encounter.html) | `Encounter.basedOn`; `Encounter.subject`; `Encounter.reasonReference` | Used when the referral results in or is associated with a receiving encounter. |
+## Logical Information Groups
 
-## 7. Relationship to AU eRequesting
+| Logical group | What it answers | Why it matters | Current PeReF mapping |
+|---------------|-----------------|----------------|-----------------------|
+| Patient identity | Who is being referred? | Prevents misidentification and supports patient matching, contact, and handover. | [ERefPatient](StructureDefinition-ereferral-patient.html); `ServiceRequest.subject`; `Task.for`. |
+| Sending context | Who created or sent the referral? | Supports accountability, callback, role, and originating facility context. | [PH eReferral PractitionerRole](StructureDefinition-ereferral-practitioner-role.html); practitioner; organization; `ServiceRequest.requester`; `Task.requester`. |
+| Receiving context | Who is expected to receive, triage, or perform the requested service? | Supports routing, triage, receiving-facility preparation, and assignment of responsibility. | Organization; [PH eReferral PractitionerRole](StructureDefinition-ereferral-practitioner-role.html); `ServiceRequest.performer`; `Task.owner`. |
+| Referral request | What service, consultation, procedure, or action is being requested? | Defines the operational purpose of the referral and the urgency of action. | [EReferral ServiceRequest](StructureDefinition-ereferral-service-request.html); `ServiceRequest.code`; `category`; `priority`; `authoredOn`; `occurrence[x]`. |
+| Clinical reason | Why is the referral needed? | Helps the receiving side triage, accept, redirect, or prepare for the patient. | `ServiceRequest.reasonCode`; `ServiceRequest.reasonReference`; Condition; Observation. |
+| Clinical context and prior care | What is the patient's current condition, and what has already been done? | Supports safe handover, continuity of care, and avoidance of duplicate or unsafe treatment. | `ServiceRequest.supportingInfo`; Observation; Condition; Procedure; [EReferral MedicationAdministration](StructureDefinition-ereferral-medication-administration.html); [ERefImmunization](StructureDefinition-ereferral-immunization.html). |
+| Workflow and response tracking | Where is the referral in the process, and what has the receiving side reported? | Tracks responsibility, response, redirection, and closure without changing the clinical referral request itself. | [EReferral Task](StructureDefinition-ereferral-task.html); `Task.focus`; `Task.status`; `Task.businessStatus`; `Task.statusReason`; `Task.output`. |
+| Audit and provenance | Who submitted, signed, or changed referral information? | Supports traceability, trust, review, and medico-legal accountability. | [EReferral Provenance](StructureDefinition-ereferral-provenance.html); `ServiceRequest.relevantHistory`; `Provenance.target`; `Provenance.recorded`; `Provenance.agent`; `Provenance.signature`. |
 
-The AU eRequesting guidance informed the structure of this page because it separates clinician-facing data requirements from FHIR implementation mapping. PeReF follows a similar pattern by first explaining logical referral information groups, then mapping those groups to FHIR artifacts and paths.
+## Data Dictionary Alignment
 
-This page does not copy AU eRequesting content and does not adopt AU eRequesting requirements as Philippine policy. PeReF remains referral-specific and Philippine-context-specific.
+The data dictionary remains the source of individual data elements. This page groups those elements into referral-package concepts so reviewers and implementers can discuss the dataset without starting from FHIR paths.
 
-Reference pages:
+Current FSH comments already identify these draft row clusters:
 
-- [AU eRequesting General Guidance](https://build.fhir.org/ig/hl7au/au-fhir-erequesting/general-guidance.html)
-- [AU eRequesting Data Items](https://build.fhir.org/ig/hl7au/au-fhir-erequesting/auereqdi.html)
+| Data dictionary area | Draft row references visible in the repository | Logical group |
+|----------------------|------------------------------------------------|---------------|
+| Referring practitioner and role | REF-1, REF-2 | Sending context |
+| Initiating facility | REF-5 to REF-8 | Sending context |
+| Care navigator and receiving facility | REF-9 to REF-11 | Receiving context; workflow tracking |
+| Referral date, category, priority, supporting information, and reason | REF-13 to REF-16 | Referral request; clinical reason; clinical context |
+| Patient demographics and contact details | REF-21 to REF-30 | Patient identity |
+| Treatment given | REF-39 | Clinical context and prior care |
+| Signature and recorded activity | REF-3, REF-4 | Audit and provenance |
 
-## 8. Known limitations for v0.1
+These row references should be verified against the approved data dictionary before release. Missing or changed rows should be updated from the source data dictionary, not inferred from this page.
 
-- This logical model is draft and intended for v0.1 beta testing and review.
-- It does not yet represent the full production referral policy.
-- Some data dictionary rows still need validation against the source data dictionary.
-- Some clinical concepts may still require CDG confirmation.
-- Some artifact mappings may change after TDG review.
-- Production routing, consent, security, attachment exchange, and exchange hosting may be covered elsewhere or deferred.
-- The dedicated workflow narrative from issue #80 / PR #83 is not yet present in this local branch, so this page links to the current local readiness, coverage, and decision pages instead of an internal workflow page.
+## FHIR Mapping Summary
 
-## 9. Review expectations
+| Logical group | Main profile or resource | Main FHIR path |
+|---------------|--------------------------|----------------|
+| Patient identity | [ERefPatient](StructureDefinition-ereferral-patient.html) | `ServiceRequest.subject`; `Task.for`; `Encounter.subject`. |
+| Sending context | [PH eReferral PractitionerRole](StructureDefinition-ereferral-practitioner-role.html), Practitioner, Organization | `ServiceRequest.requester`; `Task.requester`. |
+| Receiving context | Organization, [PH eReferral PractitionerRole](StructureDefinition-ereferral-practitioner-role.html) | `ServiceRequest.performer`; `Task.owner`. |
+| Referral request | [EReferral ServiceRequest](StructureDefinition-ereferral-service-request.html) | `ServiceRequest.status`; `intent`; `code`; `category`; `priority`; `authoredOn`; `occurrence[x]`; `replaces`. |
+| Clinical reason | Condition, Observation | `ServiceRequest.reasonCode`; `ServiceRequest.reasonReference`. |
+| Clinical context and prior care | Condition, Observation, Procedure, MedicationAdministration, Immunization | `ServiceRequest.supportingInfo`. |
+| Workflow and response tracking | [EReferral Task](StructureDefinition-ereferral-task.html) | `Task.focus`; `Task.status`; `Task.businessStatus`; `Task.statusReason`; `Task.output`. |
+| Audit and provenance | [EReferral Provenance](StructureDefinition-ereferral-provenance.html) | `ServiceRequest.relevantHistory`; `Provenance.target`; `Provenance.agent`; `Provenance.signature`. |
 
-This page should be reviewed by:
+The RESTful exchange pattern and profile relationship diagram are described on [FHIR RESTful Interactions and Profile Relationships](fhir-interactions.html).
 
-- CDG for clinical and operational meaning;
-- TDG for data dictionary and FHIR mapping accuracy;
-- IG Product Owner for v0.1 scope alignment.
+## Review Expectations
+
+Reviewers should confirm:
+
+- the logical groups match clinical and operational expectations for v0.1;
+- the data dictionary row clusters are accurate;
+- the FHIR mappings are consistent with the current PeReF profiles;
+- unresolved production topics such as routing, consent, security, attachments, and exchange hosting are handled in the appropriate implementation guidance.
