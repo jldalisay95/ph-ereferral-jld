@@ -23,6 +23,24 @@ A referral should contain enough information for the receiving facility to ident
 | Workflow and response tracking | Where is the referral in the process, and what has the receiving side reported? | Tracks responsibility, response, redirection, and closure without changing the clinical referral request itself. | [EReferral Task](StructureDefinition-ereferral-task.html); `Task.focus`; `Task.status`; `Task.businessStatus`; `Task.statusReason`; `Task.output`. |
 | Audit and provenance | Who submitted, signed, or changed referral information? | Supports traceability, trust, review, and medico-legal accountability. | [EReferral Provenance](StructureDefinition-ereferral-provenance.html); `ServiceRequest.relevantHistory`; `Provenance.target`; `Provenance.recorded`; `Provenance.agent`; `Provenance.signature`. |
 
+## Data Dictionary Traceability
+
+The data dictionary remains the source of individual data elements. This page groups those elements into referral-package concepts so reviewers and implementers can discuss the dataset without starting from FHIR paths.
+
+Current draft mapping references include these row clusters:
+
+| Data dictionary area | Draft row references | Logical group |
+|----------------------|----------------------|---------------|
+| Referring practitioner and role | REF-1, REF-2 | Sending context |
+| Initiating facility | REF-5 to REF-8 | Sending context |
+| Care navigator and receiving facility | REF-9 to REF-11 | Receiving context; workflow tracking |
+| Referral date, category, priority, supporting information, and reason | REF-13 to REF-16 | Referral request; clinical reason; clinical context |
+| Patient demographics and contact details | REF-21 to REF-30 | Patient identity |
+| Treatment given | REF-39 | Clinical context and prior care |
+| Signature and recorded activity | REF-3, REF-4 | Audit and provenance |
+
+These row references should be verified against the approved data dictionary before release. Missing or changed rows should be updated from the source data dictionary, not inferred from this page.
+
 ## eReferral Profile Relationships
 
 <svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="rel-title rel-desc" width="100%" viewBox="0 0 1180 660" preserveAspectRatio="xMidYMin meet">
@@ -58,8 +76,8 @@ A referral should contain enough information for the receiving facility to ident
   <text x="590" y="146" text-anchor="middle" class="rel-small">and facility context</text>
 
   <rect x="850" y="74" width="260" height="78" class="rel-box"/>
-  <text x="980" y="106" text-anchor="middle" class="rel-text">Organization</text>
-  <text x="980" y="132" text-anchor="middle" class="rel-small">receiving facility</text>
+  <text x="980" y="106" text-anchor="middle" class="rel-text">Organization / Role</text>
+  <text x="980" y="132" text-anchor="middle" class="rel-small">receiving facility or assigned role</text>
 
   <rect x="70" y="286" width="260" height="90" class="rel-box"/>
   <text x="200" y="318" text-anchor="middle" class="rel-text">Condition / Observation</text>
@@ -112,6 +130,8 @@ A referral should contain enough information for the receiving facility to ident
 | Encounter to request | `Encounter.basedOn` | The encounter associated with acting on or closing the referral. |
 
 ## Example FHIR RESTful Interaction Flow
+
+The following flow is illustrative. Actual supported searches, update methods, transaction behavior, and security controls should be stated in the server CapabilityStatement and exchange agreement.
 
 <svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="flow-title flow-desc" width="100%" viewBox="0 0 1180 510" preserveAspectRatio="xMidYMin meet">
   <title id="flow-title">Example eReferral RESTful interaction flow</title>
@@ -174,24 +194,6 @@ A referral should contain enough information for the receiving facility to ident
 | Record audit event or signature | `POST /Provenance` | ERefProvenance | Provenance can target the ServiceRequest and record signer, author, update, or other auditable activity. |
 | Record encounter or closure context | `POST /Encounter`; `PUT/PATCH /Task/{id}` | ERefEncounter, Task | Encounter can point back to the referral using `Encounter.basedOn`. Task completion records closure of the workflow tracking item. |
 | Submit as one package when supported | `POST /` with a transaction Bundle | Bundle containing the referral package resources | Transaction Bundles are useful for keeping references consistent, but server support and security rules must be confirmed. |
-
-## Data Dictionary Alignment
-
-The data dictionary remains the source of individual data elements. This page groups those elements into referral-package concepts so reviewers and implementers can discuss the dataset without starting from FHIR paths.
-
-Current FSH comments identify these draft row clusters:
-
-| Data dictionary area | Draft row references visible in the repository | Logical group |
-|----------------------|------------------------------------------------|---------------|
-| Referring practitioner and role | REF-1, REF-2 | Sending context |
-| Initiating facility | REF-5 to REF-8 | Sending context |
-| Care navigator and receiving facility | REF-9 to REF-11 | Receiving context; workflow tracking |
-| Referral date, category, priority, supporting information, and reason | REF-13 to REF-16 | Referral request; clinical reason; clinical context |
-| Patient demographics and contact details | REF-21 to REF-30 | Patient identity |
-| Treatment given | REF-39 | Clinical context and prior care |
-| Signature and recorded activity | REF-3, REF-4 | Audit and provenance |
-
-These row references should be verified against the approved data dictionary before release. Missing or changed rows should be updated from the source data dictionary, not inferred from this page.
 
 ## Review Expectations
 
