@@ -200,6 +200,10 @@ required API contract. Actual supported searches, update methods, transaction
 behavior, and security controls should be stated in the server
 CapabilityStatement and exchange agreement.
 
+Each interaction implies a corresponding FHIR REST response, such as `200 OK`,
+`201 Created`, or an `OperationOutcome`. Standard HTTP responses are omitted
+from the diagram for readability.
+
 <!-- markdownlint-disable MD013 MD033 -->
 
 <svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="flow-title flow-desc" width="100%" viewBox="0 0 1180 510" preserveAspectRatio="xMidYMin meet">
