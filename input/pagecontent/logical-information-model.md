@@ -2,30 +2,52 @@
 
 ## Purpose
 
-This page describes the information that should be present in a v0.1 PH
-eReferral package and how that information relates to the current PeReF FHIR
-profiles and example RESTful exchange pattern.
+This page describes the logical information model for the v0.1 PH eReferral
+package. It defines the main groups of information that should be available for
+a safe referral handover before describing how those groups relate to current
+PeReF FHIR profiles, examples, and illustrative RESTful interactions.
 
-The logical information model answers: what information is needed for a safe
-referral handover? The FHIR mapping answers: which PeReF profile or FHIR path
-carries that information? The RESTful interaction flow answers: how might
-systems exchange the referral package during implementation testing?
+The logical information model is not the workflow model, state model, final
+data dictionary, or production API specification. It is a reviewer-facing bridge
+between the referral dataset and the FHIR implementation artifacts. Future
+use-case-specific datasets, such as pregnancy referral, should reuse this core
+referral structure and add approved clinical content where needed.
 
 ## Guiding Principle
 
-A referral should contain enough information for the receiving facility to:
+For v0.1, PeReF uses the principle that a referral package should contain
+enough core information for the receiving facility to:
 
 - identify the patient;
 - understand why the referral is needed;
-- judge urgency;
-- review the clinical context;
-- know what has already been done;
-- know who sent the referral;
-- know who is expected to receive or act on it;
+- judge urgency and receiving-facility readiness;
+- review the relevant clinical context;
+- know what care, treatment, or coordination has already occurred;
+- know who sent the referral and how to follow up;
+- know who is expected to receive, triage, or act on it;
 - respond or redirect safely;
-- support audit and accountability.
+- support audit, accountability, and later review.
+
+Use-case-specific referrals may require additional clinical details, but those
+details should extend the core referral package rather than replace it.
+
+## Use-Case Extensibility
+
+The information groups below define the reusable referral envelope. Later use
+cases should keep the same core groups for patient identity, sending and
+receiving context, referral request, workflow tracking, response, and audit.
+
+Specialty or program-specific datasets should add clinical content under the
+clinical reason, clinical context, and prior care groups. For example, a future
+pregnancy referral use case could add gestational age, estimated delivery date,
+antenatal care history, maternal danger signs, fetal status, relevant
+observations, procedures, and treatment already given without changing the core
+referral envelope.
 
 ## Logical Information Groups
+
+The groups below describe what the referral package needs to communicate before
+considering the physical FHIR representation.
 
 <!-- markdownlint-disable MD013 -->
 
@@ -42,13 +64,14 @@ A referral should contain enough information for the receiving facility to:
 
 <!-- markdownlint-enable MD013 -->
 
-## Data Dictionary Traceability
+## v0.1 Data Dictionary Traceability
 
 The data dictionary remains the source of individual data elements. This page
-groups those elements into referral-package concepts so reviewers and
-implementers can discuss the dataset without starting from FHIR paths.
+groups the v0.1 general referral elements into referral-package concepts so
+reviewers and implementers can discuss the dataset without starting from FHIR
+paths.
 
-Current draft mapping references include these row clusters:
+Current draft mapping references include these v0.1 row clusters:
 
 <!-- markdownlint-disable MD013 -->
 
@@ -66,9 +89,15 @@ Current draft mapping references include these row clusters:
 
 These row references should be verified against the approved data dictionary
 before release. Missing or changed rows should be updated from the source data
-dictionary, not inferred from this page.
+dictionary, not inferred from this page. Future use-case-specific datasets
+should add their own approved row clusters and map them into the reusable
+logical groups.
 
 ## eReferral Profile Relationships
+
+The diagram shows the current v0.1 PeReF artifact relationships. It is not a
+complete catalogue of every future clinical profile that may be added for
+specialty or program-specific referral use cases.
 
 <!-- markdownlint-disable MD013 MD033 -->
 
@@ -166,8 +195,9 @@ dictionary, not inferred from this page.
 
 ## Example FHIR RESTful Interaction Flow
 
-The following flow is illustrative. Actual supported searches, update methods,
-transaction behavior, and security controls should be stated in the server
+The following flow is illustrative and non-normative. Do not treat it as a
+required API contract. Actual supported searches, update methods, transaction
+behavior, and security controls should be stated in the server
 CapabilityStatement and exchange agreement.
 
 <!-- markdownlint-disable MD013 MD033 -->
@@ -248,5 +278,7 @@ Reviewers should confirm:
 - the data dictionary row clusters are accurate;
 - the profile relationships are consistent with the current PeReF profiles;
 - REST interaction examples match the intended server CapabilityStatement;
+- future use cases can extend clinical content without replacing the core
+  referral envelope;
 - production topics such as routing, consent, security, attachments, and
   exchange hosting are handled in the appropriate implementation guidance.
