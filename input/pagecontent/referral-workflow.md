@@ -122,6 +122,7 @@ The primary request resource is [EReferral ServiceRequest](StructureDefinition-e
 Current official examples that demonstrate the v0.1 workflow pattern include:
 
 - [Example eReferral Service Request](ServiceRequest-ExampleERefServiceRequest.html)
+- [Example ServiceRequest for Task workflow](ServiceRequest-ExampleERefServiceRequestTask.html)
 - [Example eReferral Task - Requested State](Task-ExampleERefTaskRequested.html)
 - [Example eReferral Task - Received State](Task-ExampleERefTaskReceived.html)
 - [Example eReferral Task - Accepted State](Task-ExampleERefTaskAccepted.html)
@@ -129,6 +130,42 @@ Current official examples that demonstrate the v0.1 workflow pattern include:
 - [Example eReferral Task - Referred Onward State](Task-ExampleERefTaskReferredOnward.html)
 - [Example eReferral Task - Completed State](Task-ExampleERefTaskCompleted.html)
 - [Example Onward eReferral ServiceRequest](ServiceRequest-ExampleERefServiceRequestOnward.html)
+
+## Worked Example Flow Coverage
+
+The current IG example set gives reviewers a by-hand path for checking the minimum referral flow. The Task examples are separate resources, but they intentionally reference the same ServiceRequest through `Task.focus` so the state progression can be reviewed as one workflow. The policy-facing receiving response is represented using `Task.businessStatus` bound to [EReferral Receiving Facility Response](ValueSet-ereferral-receiving-response.html), while `Task.status` continues to represent the FHIR Task lifecycle state.
+
+| Step | Workflow meaning | Example resource | Expected state / element | What to check |
+| --- | --- | --- | --- | --- |
+| 1 | Referral request created | [Example ServiceRequest for Task workflow](ServiceRequest-ExampleERefServiceRequestTask.html) | `ServiceRequest.status = #active`; `ServiceRequest.intent = #order` | The request has a patient, requester, intended receiving facility, clinical reason, and requested service. |
+| 2 | Referral task requested | [Example eReferral Task - Requested State](Task-ExampleERefTaskRequested.html) | `Task.status = #requested`; `Task.focus` references the ServiceRequest | The Task tracks the referral without moving the clinical request payload into Task. |
+| 3 | Referral received / under review | [Example eReferral Task - Received State](Task-ExampleERefTaskReceived.html) | `Task.status = #received`; `Task.businessStatus = #received` | The receiving side has acknowledged receipt and `Task.owner` identifies the receiving facility. |
+| 4 | Referral accepted | [Example eReferral Task - Accepted State](Task-ExampleERefTaskAccepted.html) | `Task.status = #accepted`; `Task.businessStatus = #accepted` | The receiving side can take the case and has accepted responsibility for the referral workflow. |
+| 5 | Referral completed / closed | [Example eReferral Task - Completed State](Task-ExampleERefTaskCompleted.html) | `Task.status = #completed`; completion output is present | The workflow has an execution end and `Task.output` carries the closure summary. |
+
+The same example set also includes non-happy-path receiving responses:
+
+| Response path | Example fixture | What to verify |
+| --- | --- | --- |
+| Receiving facility cannot take the case and no onward facility is identified | [Example eReferral Task - Rejected State](Task-ExampleERefTaskRejected.html) | `Task.status = #rejected`, `Task.businessStatus = #rejected`, and `Task.statusReason` explains that no onward facility was identified in the response. |
+| Receiving facility cannot take the case and refers onward | [Example eReferral Task - Referred Onward State](Task-ExampleERefTaskReferredOnward.html) and [Example Onward eReferral ServiceRequest](ServiceRequest-ExampleERefServiceRequestOnward.html) | `Task.businessStatus = #referred-onward`, `Task.statusReason = #capacity-full`, `Task.output` identifies the onward referral, and the onward ServiceRequest uses `ServiceRequest.replaces` to point back to the original referral request. |
+
+This is an IG example-set validation path, not an executable multi-system simulation. A Postman collection, Docker Compose harness, or automated create/send/receive/respond/close script is not included in this v0.1 workflow page.
+
+## Minimum By-Hand Validation Path
+
+A reviewer or beta implementer should be able to validate the accepted referral path as follows:
+
+1. Build the IG using the project build instructions or run `sushi .` for a quick FSH check.
+2. Open the worked example resources listed above, starting with [Example ServiceRequest for Task workflow](ServiceRequest-ExampleERefServiceRequestTask.html).
+3. Confirm each Task in the accepted path references the same ServiceRequest through `Task.focus`.
+4. Confirm the Task state progression is `requested` to `received` to `accepted` to `completed`.
+5. Confirm receiving-facility response terms are represented on `Task.businessStatus`, not by overloading `ServiceRequest.status`.
+6. Confirm the clinical context remains on `ServiceRequest` through subject, requester, performer, reason, and supporting information.
+7. Confirm the completed Task has closure evidence through `Task.executionPeriod.end` and `Task.output`.
+8. Optionally inspect the rejected and referred-onward examples to verify the non-happy-path response semantics.
+
+If any step cannot be followed from the rendered IG, record the mismatch as a GitHub issue against the affected profile, example, or workflow page. The broader connectathon quick-start and test evidence template are documented on [v0.1 Connectathon Readiness](connectathon-readiness.html).
 
 The traceability table below is intentionally limited to current v0.1 examples and profiles. It should be updated if a later decision changes response terminology or if a separate referral-feedback artifact is introduced.
 
