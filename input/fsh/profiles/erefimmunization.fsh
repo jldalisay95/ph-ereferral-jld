@@ -16,4 +16,4 @@ Description: "Immunization profile for the Philippine eReferral system. Extends 
 * patient 1..1 MS
 * patient only Reference(ERefPatient)
 * patient ^short = "Patient who was immunized"
-* occurrence[x] 1..1 MS
+* occurrence[x] 1..1 MS  
