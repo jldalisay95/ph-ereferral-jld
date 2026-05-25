@@ -15,7 +15,7 @@ For v0.1, the workflow focuses on:
 - creating a referral request from an initiating facility;
 - sending the referral request to an intended receiving facility or service;
 - tracking that referral through receipt, review, outcome, and closure;
-- demonstrating the workflow with the current [EReferral ServiceRequest](StructureDefinition-ereferral-service-request.html), [EReferral Task](StructureDefinition-ereferral-task.html), and example resources.
+- demonstrating the workflow with the current eReferral request and task records, and the included examples.
 
 The following topics are deferred or not fully resolved in this v0.1 workflow narrative:
 
@@ -52,23 +52,23 @@ The minimum v0.1 workflow involves the following actors and systems.
 | Referring practitioner | Acts as the requester for the referral and provides the clinical reason and supporting information. |
 | Receiving facility / receiving service | Receives and evaluates the referral, then records the receiving-facility outcome or update. |
 | Recipient / receiving clinician or team | Performs clinical triage or clinical review after the receiving service has accepted or otherwise routed the referral for review. |
-| Care navigator | May be assigned to coordinate the referral when the local workflow includes this role. In FHIR this may be represented through `ServiceRequest.performer` or `Task.owner`, depending on the implementation pattern. |
-| Referral management system / FHIR server / exchange layer | Stores, exchanges, and updates the FHIR resources used to represent the referral request and workflow state. |
+| Care navigator | May be assigned to coordinate the referral when the local workflow includes this role. In the system this may be represented by linking the navigator to the service request or the task, depending on the implementation pattern. |
+| Referral management system / FHIR server / exchange layer | Stores, exchanges, and updates the electronic records used to represent the referral request and workflow state. |
 
 ## Minimum Workflow Steps
 
 | Step | Workflow activity | FHIR traceability |
 | --- | --- | --- |
-| 1 | Patient arrives and presents with a complaint or problem. | Patient demographics are represented by the patient resource referenced from `ServiceRequest.subject`. |
-| 2 | Initiator assesses the patient condition and determines whether referral criteria are satisfied. | Relevant clinical context may be represented with supporting resources such as `Condition` and `Observation`, then referenced from `ServiceRequest.reasonReference` or `ServiceRequest.supportingInfo`. |
-| 3 | If referral criteria are not satisfied, the minimum referral workflow ends. | No eReferral ServiceRequest is required for the v0.1 referral test path. |
+| 1 | Patient arrives and presents with a complaint or problem. | Patient demographics are captured and linked to the referral request. |
+| 2 | Initiator assesses the patient condition and determines whether referral criteria are satisfied. | Relevant clinical context may be captured as supporting information and linked to the referral request. |
+| 3 | If referral criteria are not satisfied, the minimum referral workflow ends. | No formal eReferral request record is required for the v0.1 referral test path. |
 | 4 | If referral criteria are satisfied, initiator discusses referral and next steps with the patient, including consent where applicable. | Consent capture is not fully profiled in v0.1. Any consent-related detail should be handled by local policy or a future profile decision. |
-| 5 | Initiator creates the referral request and attaches clinical summary or notes. | Create an [EReferral ServiceRequest](StructureDefinition-ereferral-service-request.html) with `status`, `intent`, `subject`, `requester`, `performer`, `authoredOn`, `priority`, `reasonCode`, `reasonReference`, `supportingInfo`, and `note` as applicable. |
-| 6 | Initiator reviews candidate receiving facilities and sends the referral. | `ServiceRequest.performer` identifies the intended receiving facility, service, practitioner role, or navigator pattern used by the implementation. |
-| 7 | Receiving service receives, registers, or logs the referral and performs referral evaluation. | If workflow tracking is used, create or update an [EReferral Task](StructureDefinition-ereferral-task.html) with `Task.focus` referencing the ServiceRequest and `Task.status` representing the current workflow state. |
+| 5 | Initiator creates the referral request and attaches clinical summary or notes. | Create an eReferral request record with the required details such as status, intent, patient, requester, performer, date authored, priority, reason, supporting information, and notes as applicable. |
+| 6 | Initiator reviews candidate receiving facilities and sends the referral. | The referral request identifies the intended receiving facility, service, practitioner role, or navigator pattern used by the implementation. |
+| 7 | Receiving service receives, registers, or logs the referral and performs referral evaluation. | If workflow tracking is used, create or update the eReferral task record so it references the request and reflects the current workflow state. |
 | 8 | Receiving service records the receiving-facility decision or outcome. | Record the receiving-facility outcome using the v0.1 receiving-response terminology: `received`, `accepted`, `rejected`, or `referred-onward`. Non-response is not represented in the current v0.1 examples. |
-| 9 | If the referral can proceed, route for clinical triage or review by the recipient and send updates to the sender. | `Task.owner`, `Task.lastModified`, `Task.note`, and `Task.output` may be used to show assignment, updates, and resulting information. |
-| 10 | Next steps after the referral decision are outside the v0.1 minimum path unless explicitly included in a test scenario. | Close the workflow when the referral outcome is known. In the current examples, closure is demonstrated with `Task.status = #completed`, `Task.executionPeriod.end`, and `Task.output`. |
+| 9 | If the referral can proceed, route for clinical triage or review by the recipient and send updates to the sender. | The task record may be used to show who is assigned, when it was last updated, notes, and resulting information. |
+| 10 | Next steps after the referral decision are outside the v0.1 minimum path unless explicitly included in a test scenario. | Close the workflow when the referral outcome is known. In the current examples, closure is demonstrated by marking the task as completed, recording the end time, and capturing the resulting information. |
 
 ## Known Limitations
 
@@ -77,7 +77,7 @@ This v0.1 workflow page intentionally documents unresolved areas rather than sil
 - Back-referral is not modeled as a required end-to-end workflow in this MVP page.
 - Attachment and security handling are not fully resolved in the current workflow narrative.
 - Facility and network identification rules are not finalized here. See [Issue #4](https://github.com/ph-ereferral-organization/ph-ereferral/issues/4) for the facility identification discussion.
-- Transport behavior is not defined by this page; implementations may use a referral management system, FHIR server, or exchange layer pattern agreed for the test event.
+- Transport behavior is not defined by this page; implementations may use a referral management system, shared server, or exchange layer pattern agreed for the test event.
 - Receiving-facility response terms are defined for v0.1 testing, but production policy endorsement remains outside this informative page.
 - Hypertensive Emergency Referral wording is pending terminology sync in [Issue #41](https://github.com/ph-ereferral-organization/ph-ereferral/issues/41).
 - Consent, candidate receiving-facility selection rules, and the detailed post-decision recipient workflow are not fully specified in this v0.1 page.
