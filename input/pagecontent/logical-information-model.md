@@ -11,7 +11,7 @@ The logical information model is not the workflow model, state model, final
 data dictionary, or production API specification. It is a reviewer-facing bridge
 between the referral dataset and the FHIR implementation artifacts. Future
 use-case-specific datasets, such as pregnancy referral, should reuse this core
-referral structure and add approved clinical content where needed.
+logical model structure and add approved clinical content where needed.
 
 ## Guiding Principle
 
@@ -24,9 +24,9 @@ enough core information for the receiving facility to:
 - review the relevant clinical context;
 - know what care, treatment, or coordination has already occurred;
 - know who sent the referral and how to follow up;
-- know who is expected to receive, triage, or act on it;
+- determine who is expected to receive, triage, or act on it;
 - respond or redirect safely;
-- support audit, accountability, and later review.
+- who is making the referral or where the referral is coming from.
 
 Use-case-specific referrals may require additional clinical details, but those
 details should extend the core referral package rather than replace it.
@@ -53,7 +53,7 @@ considering the physical FHIR representation.
 
 | Logical group | What it answers | Why it matters | Current PeReF mapping |
 | ------------- | --------------- | -------------- | --------------------- |
-| Patient identity | Who is being referred? | Prevents misidentification and supports patient matching, contact, and handover. | [ERefPatient](StructureDefinition-ereferral-patient.html); `ServiceRequest.subject`; `Task.for`; `Encounter.subject`. |
+| Patient identity | Who is being referred? | Prevents misidentification and supports patient matching, contact, handover, and billing. | [ERefPatient](StructureDefinition-ereferral-patient.html); `ServiceRequest.subject`; `Task.for`; `Encounter.subject`. |
 | Sending context | Who created or sent the referral? | Supports accountability, callback, role, and originating facility context. | [PH eReferral PractitionerRole](StructureDefinition-ereferral-practitioner-role.html); Practitioner; Organization; `ServiceRequest.requester`; `Task.requester`. |
 | Receiving context | Who is expected to receive, triage, or perform the requested service? | Supports routing, triage, receiving-facility preparation, and assignment of responsibility. | Organization; [PH eReferral PractitionerRole](StructureDefinition-ereferral-practitioner-role.html); `ServiceRequest.performer`; `Task.owner`. |
 | Referral request | What service, consultation, procedure, or action is being requested? | Defines the operational purpose of the referral and the urgency of action. | [EReferral ServiceRequest](StructureDefinition-ereferral-service-request.html); `ServiceRequest.code`; `category`; `priority`; `authoredOn`; `occurrence[x]`; `replaces`. |
