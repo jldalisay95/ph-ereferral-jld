@@ -9,7 +9,7 @@ Description: "Example diagnostic procedure documented as supporting clinical inf
 * code = $sct#29303009 "Electrocardiographic procedure"
 * subject = Reference(ExampleERefPatient)
 * performedDateTime = "2025-03-15T09:15:00+08:00"
-* performer.actor = Reference(ExampleERefPractitioner)
+* performer.actor = Reference(ExampleERefPractitionerRole)
 * performer.function = $sct#158965000 "Medical practitioner"
 * reasonCode = $sct#29857009 "Chest pain"
 * reasonReference = Reference(ExampleERefConditionChestPain)
@@ -27,7 +27,7 @@ Description: "Example therapeutic procedure or intervention performed before ref
 * subject = Reference(ExampleERefPatient)
 * performedPeriod.start = "2025-03-15T08:45:00+08:00"
 * performedPeriod.end = "2025-03-15T09:10:00+08:00"
-* performer.actor = Reference(ExampleERefPractitioner)
+* performer.actor = Reference(ExampleERefPractitionerRole)
 * performer.function = $sct#158965000 "Medical practitioner"
 * reasonCode = $sct#29857009 "Chest pain"
 * reasonReference = Reference(ExampleERefConditionChestPain)
