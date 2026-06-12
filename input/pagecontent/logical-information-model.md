@@ -95,86 +95,15 @@ logical groups.
 
 ## eReferral Profile Relationships
 
-The diagram shows the current v0.1 PeReF artifact relationships. It is not a
+The diagram shows the current v0.2 draft PeReF profile relationships. It is not a
 complete catalogue of every future clinical profile that may be added for
 specialty or program-specific referral use cases.
 
 <!-- markdownlint-disable MD013 MD033 -->
 
-<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="rel-title rel-desc" width="100%" viewBox="0 0 1180 660" preserveAspectRatio="xMidYMin meet">
-  <title id="rel-title">PeReF profile relationship diagram</title>
-  <desc id="rel-desc">Diagram showing ERefServiceRequest as the central referral request, related to patient, practitioner role, organization, clinical evidence, task, provenance, and encounter resources.</desc>
-  <defs>
-    <style>
-      .rel-core { fill: #edf7f0; stroke: #28724a; stroke-width: 2; rx: 8; }
-      .rel-box { fill: #f8fbff; stroke: #2f5f8f; stroke-width: 2; rx: 8; }
-      .rel-track { fill: #fff7e8; stroke: #9a6400; stroke-width: 2; rx: 8; }
-      .rel-text { font-family: Arial, sans-serif; font-size: 18px; fill: #1b1f24; }
-      .rel-small { font-family: Arial, sans-serif; font-size: 13px; fill: #1b1f24; }
-      .rel-label { font-family: Arial, sans-serif; font-size: 13px; fill: #44515f; }
-      .rel-line { stroke: #53616f; stroke-width: 2; marker-end: url(#rel-arrow); fill: none; }
-    </style>
-    <marker id="rel-arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L0,6 L9,3 z" fill="#53616f"/>
-    </marker>
-  </defs>
-
-  <rect x="425" y="280" width="330" height="98" class="rel-core"/>
-  <text x="590" y="316" text-anchor="middle" class="rel-text">ERefServiceRequest</text>
-  <text x="590" y="342" text-anchor="middle" class="rel-small">central referral request</text>
-  <text x="590" y="364" text-anchor="middle" class="rel-small">requester, performer, reason, supportingInfo</text>
-
-  <rect x="70" y="74" width="260" height="78" class="rel-box"/>
-  <text x="200" y="106" text-anchor="middle" class="rel-text">ERefPatient</text>
-  <text x="200" y="132" text-anchor="middle" class="rel-small">patient identity</text>
-
-  <rect x="460" y="68" width="260" height="90" class="rel-box"/>
-  <text x="590" y="100" text-anchor="middle" class="rel-text">PractitionerRole</text>
-  <text x="590" y="126" text-anchor="middle" class="rel-small">referring practitioner</text>
-  <text x="590" y="146" text-anchor="middle" class="rel-small">and facility context</text>
-
-  <rect x="850" y="74" width="260" height="78" class="rel-box"/>
-  <text x="980" y="106" text-anchor="middle" class="rel-text">Organization / Role</text>
-  <text x="980" y="132" text-anchor="middle" class="rel-small">receiving facility or assigned role</text>
-
-  <rect x="70" y="286" width="260" height="90" class="rel-box"/>
-  <text x="200" y="318" text-anchor="middle" class="rel-text">Condition / Observation</text>
-  <text x="200" y="344" text-anchor="middle" class="rel-small">clinical reason and evidence</text>
-
-  <rect x="70" y="500" width="270" height="96" class="rel-box"/>
-  <text x="205" y="532" text-anchor="middle" class="rel-text">Supporting clinical info</text>
-  <text x="205" y="558" text-anchor="middle" class="rel-small">Observation, Condition, Procedure,</text>
-  <text x="205" y="578" text-anchor="middle" class="rel-small">MedicationAdministration, Immunization</text>
-
-  <rect x="458" y="500" width="264" height="90" class="rel-track"/>
-  <text x="590" y="532" text-anchor="middle" class="rel-text">ERefTask</text>
-  <text x="590" y="558" text-anchor="middle" class="rel-small">workflow and response tracking</text>
-
-  <rect x="850" y="286" width="260" height="90" class="rel-track"/>
-  <text x="980" y="318" text-anchor="middle" class="rel-text">ERefProvenance</text>
-  <text x="980" y="344" text-anchor="middle" class="rel-small">audit, signature, activity history</text>
-
-  <rect x="850" y="500" width="260" height="90" class="rel-box"/>
-  <text x="980" y="532" text-anchor="middle" class="rel-text">ERefEncounter</text>
-  <text x="980" y="558" text-anchor="middle" class="rel-small">receiving encounter context</text>
-
-  <line x1="330" y1="116" x2="425" y2="302" class="rel-line"/>
-  <text x="340" y="190" class="rel-label">subject</text>
-  <line x1="590" y1="158" x2="590" y2="280" class="rel-line"/>
-  <text x="604" y="224" class="rel-label">requester</text>
-  <line x1="850" y1="116" x2="755" y2="302" class="rel-line"/>
-  <text x="780" y="190" class="rel-label">performer</text>
-  <line x1="330" y1="331" x2="425" y2="331" class="rel-line"/>
-  <text x="338" y="318" class="rel-label">reasonReference</text>
-  <line x1="340" y1="548" x2="486" y2="378" class="rel-line"/>
-  <text x="350" y="474" class="rel-label">supportingInfo</text>
-  <line x1="590" y1="500" x2="590" y2="378" class="rel-line"/>
-  <text x="604" y="448" class="rel-label">focus</text>
-  <line x1="850" y1="331" x2="755" y2="331" class="rel-line"/>
-  <text x="770" y="318" class="rel-label">relevantHistory</text>
-  <line x1="940" y1="500" x2="720" y2="378" class="rel-line"/>
-  <text x="805" y="460" class="rel-label">basedOn</text>
-</svg>
+<img src="images/ph-ereferral-profile-relationships-v0.2.drawio.svg"
+     alt="PH eReferral FHIR Profile Relationship Diagram v0.2 (draft). ERefServiceRequest is the central resource, connected to ERefPractitionerRole (requester), PHCoreOrganization (performer), ERefPatient (subject), ERefTask (focus), ERefProvenance (relevantHistory), and ERefEncounter (basedOn). ServiceRequest.supportingInfo and reasonReference reference clinical summary resources: ERefObservation, ERefImmunization, ERefMedicationAdministration, PHCoreCondition, and PHCoreProcedure. ERefRelatedPerson links to ERefPatient."
+     style="max-width:100%;height:auto;" />
 
 <!-- markdownlint-enable MD013 MD033 -->
 
