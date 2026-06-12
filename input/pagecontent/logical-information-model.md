@@ -101,7 +101,7 @@ specialty or program-specific referral use cases.
 
 <!-- markdownlint-disable MD013 MD033 -->
 
-<img src="images/ph-ereferral-profile-relationships-v0.2.drawio.svg"
+<img src="peref-fhir-relationship-diagram.png"
      alt="PH eReferral FHIR Profile Relationship Diagram v0.2 (draft). ERefServiceRequest is the central resource, connected to ERefPractitionerRole (requester), PHCoreOrganization (performer), ERefPatient (subject), ERefTask (focus), ERefProvenance (relevantHistory), and ERefEncounter (basedOn). ServiceRequest.supportingInfo and reasonReference reference clinical summary resources: ERefObservation, ERefImmunization, ERefMedicationAdministration, PHCoreCondition, and PHCoreProcedure. ERefRelatedPerson links to ERefPatient."
      style="max-width:100%;height:auto;" />
 
