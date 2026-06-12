@@ -24,6 +24,12 @@ Description: "Diagnostic report profile for laboratory, diagnostic imaging, path
   * ^short = "Diagnostic report type"
   * ^definition = "The diagnostic report or panel represented by this resource. The inherited FHIR R4 preferred binding uses LOINC diagnostic report codes."
 
+* basedOn MS
+* basedOn insert ObligationOptional
+* basedOn only Reference(ERefServiceRequest)
+  * ^short = "Referral request associated with this report"
+  * ^definition = "The Philippine eReferral ServiceRequest associated with this diagnostic report, when known."
+
 * subject 1..1 MS
 * subject only Reference(ERefPatient)
   * ^short = "Patient who is the subject of the report"
@@ -58,6 +64,7 @@ Description: "Diagnostic report profile for laboratory, diagnostic imaging, path
   * ^definition = "A concise clinical interpretation or summary of the diagnostic findings."
 
 * presentedForm MS
+* presentedForm insert ObligationOptional
   * ^short = "Complete formatted diagnostic report"
   * ^definition = "The complete report as an attachment. Supported formats are PDF or PDF/A (application/pdf), PNG (image/png), JPG/JPEG (image/jpeg), and GIF (image/gif). Attachments should not exceed 5 MB (5,242,880 bytes)."
 

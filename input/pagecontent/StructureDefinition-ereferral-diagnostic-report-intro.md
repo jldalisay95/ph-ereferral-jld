@@ -1,8 +1,8 @@
 ### EReferral DiagnosticReport
 
-The **EReferral DiagnosticReport** profile represents laboratory, diagnostic imaging, pathology, and histopathology reports that are relevant to referral handover. A report is normally linked from `ServiceRequest.supportingInfo`.
+The **EReferral DiagnosticReport** profile represents laboratory, diagnostic imaging, pathology, and histopathology reports that are relevant to referral handover. A report is normally linked from `ServiceRequest.supportingInfo`. When the originating referral request is known, `DiagnosticReport.basedOn` may reference the associated `ERefServiceRequest`.
 
-Use the official [FHIR R4 DiagnosticReport examples](https://hl7.org/fhir/R4/diagnosticreport-examples.html) as the base examples for DiagnosticReport payloads. PeReF does not add local DiagnosticReport example instances while PH Core has no DiagnosticReport profile or examples to extend.
+The [PeReF PDF attachment example](DiagnosticReport-ExampleERefDiagnosticReportPDF.html) demonstrates a report associated with an eReferral and a complete report attachment represented through `presentedForm`. Additional payload patterns are available in the official [FHIR R4 DiagnosticReport examples](https://hl7.org/fhir/R4/diagnosticreport-examples.html).
 
 #### Clinical Rationale
 
@@ -12,6 +12,7 @@ Referral recipients need both individual findings and the report-level interpret
 
 - Use `Observation` for an atomic finding or measurement, such as a glucose result.
 - Use `DiagnosticReport.result` to link the report to structured atomic `ERefObservation` results when available.
+- Use `DiagnosticReport.basedOn` to reference the associated `ERefServiceRequest` when known.
 - Use `DiagnosticReport.conclusion` for a concise report-level interpretation or summary.
 - Use `DiagnosticReport.presentedForm` for the complete formatted report.
 - Use `DiagnosticReport.media.link` only for selected key images represented as `Media`; it is not a substitute for the complete report attachment.
