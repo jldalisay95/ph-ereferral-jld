@@ -1,82 +1,57 @@
-<style type="text/css">
-  /* ─────────────────────────────────────────────────────────────
-     Class-based Table Styling — only affects tables with classes
-     ───────────────────────────────────────────────────────────── */
+<style>
+.ph-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 
-  /* Table Responsive (missing from Bootstrap 3 base template) */
-  .table-responsive {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+
+.ph-table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  font-size: 0.95em;
+  box-shadow: 0 1px 3px rgba(0,0,0,1);
+}
+
+.ph-table table {
+  width: 100%;
   }
 
-  /* Dark header */
-  .thead-dark th {
-    text-align: left;
-    padding: 6px 10px;
-    border: 1px solid #dee2e6;
-    font-weight: bold;
-    background-color: #e8e8e8;
-  }
+.ph-table thead {
+  display: table-header-group;
+}
 
-  /* Global table enhancements */
-  .table-bordered {
-    border: 1px solid #dee2e6;
-  }
-  .table-bordered th,
-  .table-bordered td {
-    border: 1px solid #dee2e6;
-  }
+.ph-table th {
+  background-color: #555555;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 10px 14px;
+  text-align: left;
+  border: 1px solid #444444;
+}
 
-  .table-striped tbody tr:nth-of-type(even) {
-    background-color: rgba(0, 0, 0, 0.03);
-  }
+.ph-table td {
+  padding: 8px 14px;
+  border: 1px solid #e2e8f0;
+  vertical-align: top;
+}
 
-  /* ─────────────────────────────────────────────────────────────
-     .ph-table wrapper — for markdown tables in narrative pages
-     Wrap your markdown table in <div class="ph-table" markdown="1">
-     ───────────────────────────────────────────────────────────── */
-  .ph-table table {
-    width: 100%;
-    max-width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 1rem;
-    background-color: transparent;
-    border: 1px solid #dee2e6;
-  }
+.ph-table tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
 
-  .ph-table th {
-    text-align: left;
-    padding: 6px 10px;
-    border: 1px solid #dee2e6;
-    font-weight: bold;
-    color: #333;
-    background-color: #e8e8e8;
-  }
+.ph-table tbody tr:nth-child(even) {
+  background-color: #f7fafc;
+}
 
-  .ph-table td {
-    border: 1px solid #dee2e6;
-  }
+.ph-table tbody tr:hover {
+  background-color: #ebf8ff;
+  transition: background-color 0.2s ease;
+}
 
-  .ph-table td:first-child {
-    font-weight: bold;
-  }
-
-  .ph-table tr:nth-of-type(odd) {
-    background-color: transparent;
-  }
-
-  .ph-table tr:nth-of-type(even) {
-    background-color: rgba(0, 0, 0, 0.03);
-  }
-
-  /* ─────────────────────────────────────────────────────────────
-     Data-Dictionary-specific scrollable wrapper
-     ───────────────────────────────────────────────────────────── */
-  .data-dictionary-wrapper {
-    max-width: 100%;
-    margin-bottom: 1rem;
-  }
-
+.ph-table td code {
+  background-color: #edf2f7;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
 </style>
